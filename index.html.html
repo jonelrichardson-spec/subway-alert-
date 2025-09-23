@@ -1,0 +1,1026 @@
+<!DOCTYPE html><!DOCTYPE html>
+
+<html lang="en"><html lang="en">
+
+<head><head>
+
+    <meta charset="UTF-8">    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NYC Subway Alerts</title>    <title>NYC Subway Alerts</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@400;700&display=swap">    <style>
+
+    <style>        * {
+
+        :root {            margin: 0;
+
+            --metrocard-yellow: #FFD320;            padding: 0;
+
+            --mta-blue: #003087;            box-sizing: border-box;
+
+            --black: #000000;        }
+
+            --white: #FFFFFF;
+
+            --critical: #e74c3c;        body {
+
+            --warning: #f39c12;            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+            --info: #3498db;            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+            --good-service: #27ae60;            min-height: 100vh;
+
+            --card-texture: repeating-linear-gradient(            padding: 20px;
+
+                95deg,        }
+
+                rgba(255, 255, 255, 0.05) 0px,
+
+                rgba(255, 255, 255, 0.05) 1px,        .container {
+
+                transparent 1px,            max-width: 1200px;
+
+                transparent 10px            margin: 0 auto;
+
+            );        }
+
+            --magnetic-stripe: linear-gradient(
+
+                to right,        .header {
+
+                transparent 0%,            background: white;
+
+                #000 5%,            padding: 20px;
+
+                #000 95%,            border-radius: 15px;
+
+                transparent 100%            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+
+            );            margin-bottom: 20px;
+
+        }            text-align: center;
+
+        }
+
+        * {
+
+            margin: 0;        .header h1 {
+
+            padding: 0;            color: #2c3e50;
+
+            box-sizing: border-box;            margin-bottom: 10px;
+
+        }            font-size: 2.5rem;
+
+        }
+
+        body {
+
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;        .header p {
+
+            background: repeating-linear-gradient(            color: #7f8c8d;
+
+                45deg,            font-size: 1.1rem;
+
+                #f0f0f0 0px,        }
+
+                #f0f0f0 10px,
+
+                #e6e6e6 10px,        .controls {
+
+                #e6e6e6 20px            background: white;
+
+            );            padding: 20px;
+
+            min-height: 100vh;            border-radius: 15px;
+
+            padding: 20px;            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+
+        }            margin-bottom: 20px;
+
+            display: flex;
+
+        .container {            gap: 15px;
+
+            max-width: 1200px;            align-items: center;
+
+            margin: 0 auto;            flex-wrap: wrap;
+
+        }        }
+
+
+
+        .header {        .control-group {
+
+            background: var(--metrocard-yellow);            display: flex;
+
+            padding: 30px;            flex-direction: column;
+
+            border-radius: 12px;            gap: 5px;
+
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);        }
+
+            margin-bottom: 20px;
+
+            text-align: center;        .control-group label {
+
+            position: relative;            font-weight: 600;
+
+            overflow: hidden;            color: #2c3e50;
+
+        }            font-size: 0.9rem;
+
+        }
+
+        .header::before {
+
+            content: '';        select, button {
+
+            position: absolute;            padding: 10px 15px;
+
+            top: 0;            border: 2px solid #e9ecef;
+
+            left: 0;            border-radius: 8px;
+
+            right: 0;            font-size: 1rem;
+
+            bottom: 0;            transition: all 0.3s ease;
+
+            background: var(--card-texture);        }
+
+            pointer-events: none;
+
+        }        select:focus, button:focus {
+
+            outline: none;
+
+        .header::after {            border-color: #667eea;
+
+            content: '';            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+
+            position: absolute;        }
+
+            top: 70%;
+
+            left: 0;        .refresh-btn {
+
+            right: 0;            background: #667eea;
+
+            height: 40px;            color: white;
+
+            background: var(--magnetic-stripe);            border: none;
+
+        }            cursor: pointer;
+
+            font-weight: 600;
+
+        .header h1 {            padding: 12px 20px;
+
+            color: var(--mta-blue);            margin-left: auto;
+
+            margin-bottom: 10px;        }
+
+            font-size: 2.5rem;
+
+            font-weight: 700;        .refresh-btn:hover {
+
+            text-transform: uppercase;            background: #5a6fd8;
+
+            letter-spacing: -1px;            transform: translateY(-2px);
+
+            position: relative;        }
+
+            z-index: 1;
+
+        }        .stats {
+
+            display: grid;
+
+        .header p {            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
+            color: var(--mta-blue);            gap: 15px;
+
+            font-size: 1.1rem;            margin-bottom: 20px;
+
+            position: relative;        }
+
+            z-index: 1;
+
+        }        .stat-card {
+
+            background: white;
+
+        .controls {            padding: 20px;
+
+            background: var(--white);            border-radius: 15px;
+
+            padding: 20px;            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+
+            border-radius: 12px;            text-align: center;
+
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);        }
+
+            margin-bottom: 20px;
+
+            display: flex;        .stat-number {
+
+            gap: 15px;            font-size: 2.5rem;
+
+            align-items: center;            font-weight: bold;
+
+            flex-wrap: wrap;            margin-bottom: 5px;
+
+            position: relative;        }
+
+            overflow: hidden;
+
+        }        .stat-label {
+
+            color: #7f8c8d;
+
+        .controls::before {            font-size: 0.9rem;
+
+            content: '';            text-transform: uppercase;
+
+            position: absolute;            letter-spacing: 1px;
+
+            top: 0;        }
+
+            left: 0;
+
+            right: 0;        .critical { color: #e74c3c; }
+
+            bottom: 0;        .warning { color: #f39c12; }
+
+            background: var(--card-texture);        .info { color: #3498db; }
+
+            opacity: 0.5;        .good-service { color: #27ae60; }
+
+            pointer-events: none;
+
+        }        .alerts-container {
+
+            display: grid;
+
+        .control-group {            gap: 15px;
+
+            display: flex;        }
+
+            flex-direction: column;
+
+            gap: 5px;        .alert-card {
+
+            position: relative;            background: white;
+
+            z-index: 1;            border-radius: 15px;
+
+        }            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+
+            overflow: hidden;
+
+        .control-group label {            transition: all 0.3s ease;
+
+            font-weight: 700;            border-left: 5px solid;
+
+            color: var(--mta-blue);        }
+
+            font-size: 0.9rem;
+
+            text-transform: uppercase;        .alert-card:hover {
+
+        }            transform: translateY(-3px);
+
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+
+        select, button {        }
+
+            padding: 12px 20px;
+
+            border: 2px solid var(--mta-blue);        .alert-card.critical {
+
+            border-radius: 8px;            border-left-color: #e74c3c;
+
+            font-size: 1rem;        }
+
+            transition: all 0.3s ease;
+
+            background: var(--white);        .alert-card.warning {
+
+            color: var(--mta-blue);            border-left-color: #f39c12;
+
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;        }
+
+            font-weight: 700;
+
+        }        .alert-card.info {
+
+            border-left-color: #3498db;
+
+        select:focus, button:focus {        }
+
+            outline: none;
+
+            border-color: var(--metrocard-yellow);        .alert-header {
+
+            box-shadow: 0 0 0 3px rgba(255, 211, 32, 0.3);            padding: 15px 20px;
+
+        }            background: #f8f9fa;
+
+            border-bottom: 1px solid #e9ecef;
+
+        .refresh-btn {            display: flex;
+
+            background: var(--mta-blue);            justify-content: space-between;
+
+            color: var(--white);            align-items: center;
+
+            border: none;            flex-wrap: wrap;
+
+            cursor: pointer;            gap: 10px;
+
+            font-weight: 700;        }
+
+            padding: 12px 24px;
+
+            margin-left: auto;        .alert-lines {
+
+            text-transform: uppercase;            display: flex;
+
+            letter-spacing: 0.5px;            gap: 5px;
+
+            position: relative;            flex-wrap: wrap;
+
+            overflow: hidden;        }
+
+        }
+
+        .line-badge {
+
+        .refresh-btn::before {            padding: 5px 10px;
+
+            content: '';            border-radius: 15px;
+
+            position: absolute;            color: white;
+
+            top: 0;            font-weight: bold;
+
+            left: -100%;            font-size: 0.8rem;
+
+            width: 100%;        }
+
+            height: 100%;
+
+            background: linear-gradient(        .severity-badge {
+
+                to right,            padding: 5px 12px;
+
+                transparent 0%,            border-radius: 12px;
+
+                rgba(255, 255, 255, 0.2) 50%,            color: white;
+
+                transparent 100%            font-size: 0.8rem;
+
+            );            font-weight: 600;
+
+            transition: left 0.5s ease;            text-transform: uppercase;
+
+        }        }
+
+
+
+        .refresh-btn:hover::before {        .severity-badge.critical { background: #e74c3c; }
+
+            left: 100%;        .severity-badge.warning { background: #f39c12; }
+
+        }        .severity-badge.info { background: #3498db; }
+
+
+
+        .refresh-btn:hover {        .alert-content {
+
+            background: #002670;            padding: 20px;
+
+            transform: translateY(-2px);        }
+
+        }
+
+        .alert-title {
+
+        .stats {            font-size: 1.2rem;
+
+            display: grid;            font-weight: 600;
+
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));            color: #2c3e50;
+
+            gap: 15px;            margin-bottom: 10px;
+
+            margin-bottom: 20px;        }
+
+        }
+
+        .alert-description {
+
+        .stat-card {            color: #5a6c7d;
+
+            background: var(--metrocard-yellow);            line-height: 1.6;
+
+            padding: 20px;            margin-bottom: 15px;
+
+            border-radius: 12px;        }
+
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+
+            text-align: center;        .alert-footer {
+
+            position: relative;            display: flex;
+
+            overflow: hidden;            justify-content: between;
+
+            transform: perspective(1000px) rotateX(5deg);            align-items: center;
+
+            transition: transform 0.3s ease;            font-size: 0.9rem;
+
+        }            color: #7f8c8d;
+
+            margin-top: 15px;
+
+        .stat-card:hover {            padding-top: 15px;
+
+            transform: perspective(1000px) rotateX(0deg);            border-top: 1px solid #e9ecef;
+
+        }        }
+
+
+
+        .stat-card::before {        .timestamp {
+
+            content: '';            font-weight: 500;
+
+            position: absolute;        }
+
+            top: 0;
+
+            left: 0;        .no-alerts {
+
+            right: 0;            text-align: center;
+
+            bottom: 0;            padding: 40px;
+
+            background: var(--card-texture);            color: #7f8c8d;
+
+            opacity: 0.7;        }
+
+            pointer-events: none;
+
+        }        .no-alerts h3 {
+
+            color: #27ae60;
+
+        .stat-card::after {            margin-bottom: 10px;
+
+            content: '';        }
+
+            position: absolute;
+
+            bottom: 20%;        .loading {
+
+            left: 0;            text-align: center;
+
+            right: 0;            padding: 40px;
+
+            height: 20px;        }
+
+            background: var(--magnetic-stripe);
+
+            opacity: 0.8;        .spinner {
+
+        }            width: 40px;
+
+            height: 40px;
+
+        .stat-number {            border: 4px solid #e9ecef;
+
+            font-size: 2.5rem;            border-top: 4px solid #667eea;
+
+            font-weight: bold;            border-radius: 50%;
+
+            margin-bottom: 5px;            animation: spin 1s linear infinite;
+
+            position: relative;            margin: 0 auto 20px;
+
+            z-index: 1;        }
+
+        }
+
+        @keyframes spin {
+
+        .stat-label {            0% { transform: rotate(0deg); }
+
+            color: var(--mta-blue);            100% { transform: rotate(360deg); }
+
+            font-size: 0.9rem;        }
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;        @media (max-width: 768px) {
+
+            font-weight: 700;            .controls {
+
+            position: relative;                flex-direction: column;
+
+            z-index: 1;                align-items: stretch;
+
+        }            }
+
+            
+
+        .critical { color: var(--critical); }            .refresh-btn {
+
+        .warning { color: var(--warning); }                margin-left: 0;
+
+        .info { color: var(--info); }            }
+
+        .good-service { color: var(--good-service); }            
+
+            .alert-header {
+
+        .alerts-container {                flex-direction: column;
+
+            display: grid;                align-items: flex-start;
+
+            gap: 15px;            }
+
+        }        }
+
+    </style>
+
+        .alert-card {</head>
+
+            background: var(--metrocard-yellow);<body>
+
+            border-radius: 12px;    <div class="container">
+
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);        <header class="header">
+
+            overflow: hidden;            <h1>🚇 NYC Subway Alerts</h1>
+
+            transition: all 0.3s ease;            <p>Real-time service alerts and updates for New York City Transit</p>
+
+            position: relative;        </header>
+
+            aspect-ratio: 1.586;
+
+            max-width: 100%;        <div class="controls">
+
+        }            <div class="control-group">
+
+                <label for="lineFilter">Filter by Line:</label>
+
+        .alert-card::before {                <select id="lineFilter">
+
+            content: '';                    <option value="all">All Lines</option>
+
+            position: absolute;                    <option value="123">1, 2, 3</option>
+
+            top: 0;                    <option value="456">4, 5, 6</option>
+
+            left: 0;                    <option value="7">7</option>
+
+            right: 0;                    <option value="ACE">A, C, E</option>
+
+            bottom: 0;                    <option value="BDFM">B, D, F, M</option>
+
+            background: var(--card-texture);                    <option value="G">G</option>
+
+            opacity: 0.7;                    <option value="JZ">J, Z</option>
+
+            pointer-events: none;                    <option value="L">L</option>
+
+        }                    <option value="NQR">N, Q, R, W</option>
+
+                    <option value="S">S (Shuttle)</option>
+
+        .alert-card::after {                </select>
+
+            content: '';            </div>
+
+            position: absolute;
+
+            top: 75%;            <div class="control-group">
+
+            left: 0;                <label for="severityFilter">Filter by Severity:</label>
+
+            right: 0;                <select id="severityFilter">
+
+            height: 30px;                    <option value="all">All Severities</option>
+
+            background: var(--magnetic-stripe);                    <option value="critical">Critical</option>
+
+            opacity: 0.8;                    <option value="warning">Warning</option>
+
+        }                    <option value="info">Info</option>
+
+                </select>
+
+        .alert-card:hover {            </div>
+
+            transform: translateY(-3px) scale(1.01);
+
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);            <button class="refresh-btn" onclick="loadAlerts()">
+
+        }                🔄 Refresh Alerts
+
+            </button>
+
+        .alert-card.critical .alert-header {        </div>
+
+            background: var(--critical);
+
+            color: var(--white);        <div class="stats">
+
+        }            <div class="stat-card">
+
+                <div class="stat-number critical" id="criticalCount">0</div>
+
+        .alert-card.warning .alert-header {                <div class="stat-label">Critical Alerts</div>
+
+            background: var(--warning);            </div>
+
+            color: var(--white);            <div class="stat-card">
+
+        }                <div class="stat-number warning" id="warningCount">0</div>
+
+                <div class="stat-label">Warnings</div>
+
+        .alert-card.info .alert-header {            </div>
+
+            background: var(--info);            <div class="stat-card">
+
+            color: var(--white);                <div class="stat-number info" id="infoCount">0</div>
+
+        }                <div class="stat-label">Service Info</div>
+
+            </div>
+
+        .alert-header {            <div class="stat-card">
+
+            padding: 15px 20px;                <div class="stat-number good-service" id="goodServiceCount">0</div>
+
+            display: flex;                <div class="stat-label">Good Service</div>
+
+            justify-content: space-between;            </div>
+
+            align-items: center;        </div>
+
+            flex-wrap: wrap;
+
+            gap: 10px;        <div id="alertsContainer" class="alerts-container">
+
+            position: relative;            <div class="loading">
+
+            z-index: 1;                <div class="spinner"></div>
+
+        }                <p>Loading subway alerts...</p>
+
+            </div>
+
+        .alert-lines {        </div>
+
+            display: flex;    </div>
+
+            gap: 5px;
+
+            flex-wrap: wrap;    <script>
+
+        }        // Subway line colors for visual appeal
+
+        const lineColors = {
+
+        .line-badge {            '1': '#EE352E', '2': '#EE352E', '3': '#EE352E',
+
+            padding: 5px 10px;            '4': '#00933C', '5': '#00933C', '6': '#00933C',
+
+            border-radius: 15px;            '7': '#B933AD',
+
+            color: var(--white);            'A': '#0039A6', 'C': '#0039A6', 'E': '#0039A6',
+
+            font-weight: bold;            'B': '#FF6319', 'D': '#FF6319', 'F': '#FF6319', 'M': '#FF6319',
+
+            font-size: 0.8rem;            'G': '#6CBE45',
+
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);            'J': '#996633', 'Z': '#996633',
+
+        }            'L': '#A7A9AC',
+
+            'N': '#FCCC0A', 'Q': '#FCCC0A', 'R': '#FCCC0A', 'W': '#FCCC0A',
+
+        .severity-badge {            'S': '#808183'
+
+            padding: 5px 12px;        };
+
+            border-radius: 12px;
+
+            color: var(--white);        // Simulated alert data (in real app, this would come from MTA API)
+
+            font-size: 0.8rem;        const simulatedAlerts = [
+
+            font-weight: 700;            {
+
+            text-transform: uppercase;                id: '1',
+
+            letter-spacing: 0.5px;                title: 'Service Disruption on 4, 5, 6 Lines',
+
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);                description: 'Due to signal problems at Union Square, expect delays in both directions. Trains are operating with increased travel time of 15-20 minutes.',
+
+        }                lines: ['4', '5', '6'],
+
+                severity: 'critical',
+
+        .severity-badge.critical { background: var(--critical); }                timestamp: new Date(Date.now() - 1800000), // 30 minutes ago
+
+        .severity-badge.warning { background: var(--warning); }                affectedStations: ['Union Sq', '14 St', 'Astor Pl']
+
+        .severity-badge.info { background: var(--info); }            },
+
+            {
+
+        .alert-content {                id: '2',
+
+            padding: 20px;                title: 'Weekend Service Changes',
+
+            position: relative;                description: 'L train is not running between 14 St-Union Sq and 8 Av due to planned maintenance work. Free shuttle bus service is available.',
+
+            z-index: 1;                lines: ['L'],
+
+            background: var(--white);                severity: 'warning',
+
+            height: calc(100% - 60px);                timestamp: new Date(Date.now() - 3600000), // 1 hour ago
+
+        }                affectedStations: ['14 St-Union Sq', '8 Av', '6 Av']
+
+            },
+
+        .alert-title {            {
+
+            font-size: 1.2rem;                id: '3',
+
+            font-weight: 700;                title: 'Express Service Running Local',
+
+            color: var(--mta-blue);                description: 'N and Q trains are running local in Manhattan due to track work. Allow extra travel time.',
+
+            margin-bottom: 10px;                lines: ['N', 'Q'],
+
+        }                severity: 'warning',
+
+                timestamp: new Date(Date.now() - 900000), // 15 minutes ago
+
+        .alert-description {                affectedStations: ['Times Sq', 'Herald Sq', 'Union Sq']
+
+            color: var(--black);            },
+
+            line-height: 1.6;            {
+
+            margin-bottom: 15px;                id: '4',
+
+        }                title: 'Station Accessibility Update',
+
+                description: 'Elevator at 59 St-Columbus Circle is back in service. All station levels are now accessible.',
+
+        .alert-footer {                lines: ['A', 'B', 'C', 'D'],
+
+            display: flex;                severity: 'info',
+
+            justify-content: between;                timestamp: new Date(Date.now() - 600000), // 10 minutes ago
+
+            align-items: center;                affectedStations: ['59 St-Columbus Circle']
+
+            font-size: 0.9rem;            },
+
+            color: var(--mta-blue);            {
+
+            margin-top: 15px;                id: '5',
+
+            padding-top: 15px;                title: 'Rush Hour Express Service',
+
+            border-top: 1px solid rgba(0, 48, 135, 0.2);                description: 'Additional 6 express trains are running during evening rush hours to reduce crowding.',
+
+        }                lines: ['6'],
+
+                severity: 'info',
+
+        .timestamp {                timestamp: new Date(Date.now() - 1200000), // 20 minutes ago
+
+            font-weight: 700;                affectedStations: ['Multiple stations']
+
+        }            }
+
+        ];
+
+        .no-alerts {
+
+            text-align: center;        let currentAlerts = [];
+
+            padding: 40px;        let filteredAlerts = [];
+
+            color: var(--mta-blue);
+
+        }        // Initialize the app
+
+        document.addEventListener('DOMContentLoaded', function() {
+
+        .no-alerts h3 {            setupEventListeners();
+
+            color: var(--good-service);            loadAlerts();
+
+            margin-bottom: 10px;        });
+
+        }
+
+        function setupEventListeners() {
+
+        .loading {            document.getElementById('lineFilter').addEventListener('change', applyFilters);
+
+            text-align: center;            document.getElementById('severityFilter').addEventListener('change', applyFilters);
+
+            padding: 40px;        }
+
+            color: var(--mta-blue);
+
+        }        // Simulate API call to load alerts
+
+        function loadAlerts() {
+
+        .spinner {            showLoading();
+
+            width: 40px;            
+
+            height: 40px;            // Simulate API delay
+
+            border: 4px solid var(--metrocard-yellow);            setTimeout(() => {
+
+            border-top: 4px solid var(--mta-blue);                currentAlerts = [...simulatedAlerts];
+
+            border-radius: 50%;                applyFilters();
+
+            animation: spin 1s linear infinite;                updateStats();
+
+            margin: 0 auto 20px;            }, 1500);
+
+        }        }
+
+
+
+        @keyframes spin {        function showLoading() {
+
+            0% { transform: rotate(0deg); }            document.getElementById('alertsContainer').innerHTML = `
+
+            100% { transform: rotate(360deg); }                <div class="loading">
+
+        }                    <div class="spinner"></div>
+
+                    <p>Loading subway alerts...</p>
+
+        @media (max-width: 768px) {                </div>
+
+            .controls {            `;
+
+                flex-direction: column;        }
+
+                align-items: stretch;
+
+            }        function applyFilters() {
+
+                        const lineFilter = document.getElementById('lineFilter').value;
+
+            .refresh-btn {            const severityFilter = document.getElementById('severityFilter').value;
+
+                margin-left: 0;
+
+            }            filteredAlerts = currentAlerts.filter(alert => {
+
+                            const lineMatch = lineFilter === 'all' || 
+
+            .alert-header {                    alert.lines.some(line => {
+
+                flex-direction: column;                        if (lineFilter === '123') return ['1', '2', '3'].includes(line);
+
+                align-items: flex-start;                        if (lineFilter === '456') return ['4', '5', '6'].includes(line);
+
+            }                        if (lineFilter === '7') return line === '7';
+
+        }                        if (lineFilter === 'ACE') return ['A', 'C', 'E'].includes(line);
+
+    </style>                        if (lineFilter === 'BDFM') return ['B', 'D', 'F', 'M'].includes(line);
+
+</head>                        if (lineFilter === 'G') return line === 'G';
+
+<body>                        if (lineFilter === 'JZ') return ['J', 'Z'].includes(line);
+
+    <!-- Rest of the HTML content remains the same -->                        if (lineFilter === 'L') return line === 'L';
+
+    <!-- JavaScript content remains the same -->                        if (lineFilter === 'NQR') return ['N', 'Q', 'R', 'W'].includes(line);
+
+    [Previous HTML and JavaScript content remains exactly the same]                        if (lineFilter === 'S') return line === 'S';
+
+</body>                        return false;
+
+</html>                    });
+                
+                const severityMatch = severityFilter === 'all' || alert.severity === severityFilter;
+                
+                return lineMatch && severityMatch;
+            });
+
+            renderAlerts();
+            updateStats();
+        }
+
+        function renderAlerts() {
+            const container = document.getElementById('alertsContainer');
+            
+            if (filteredAlerts.length === 0) {
+                container.innerHTML = `
+                    <div class="alert-card">
+                        <div class="no-alerts">
+                            <h3>✅ Good Service!</h3>
+                            <p>No service alerts match your current filters.</p>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredAlerts.map(alert => `
+                <div class="alert-card ${alert.severity}">
+                    <div class="alert-header">
+                        <div class="alert-lines">
+                            ${alert.lines.map(line => `
+                                <span class="line-badge" style="background-color: ${lineColors[line] || '#666'}">
+                                    ${line}
+                                </span>
+                            `).join('')}
+                        </div>
+                        <span class="severity-badge ${alert.severity}">
+                            ${alert.severity}
+                        </span>
+                    </div>
+                    <div class="alert-content">
+                        <h3 class="alert-title">${alert.title}</h3>
+                        <p class="alert-description">${alert.description}</p>
+                        <div class="alert-footer">
+                            <span class="timestamp">
+                                📅 Updated: ${formatTimestamp(alert.timestamp)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateStats() {
+            const stats = {
+                critical: currentAlerts.filter(a => a.severity === 'critical').length,
+                warning: currentAlerts.filter(a => a.severity === 'warning').length,
+                info: currentAlerts.filter(a => a.severity === 'info').length
+            };
+
+            // Calculate good service lines (lines with no critical alerts)
+            const linesWithIssues = new Set();
+            currentAlerts.forEach(alert => {
+                if (alert.severity === 'critical') {
+                    alert.lines.forEach(line => linesWithIssues.add(line));
+                }
+            });
+            
+            const totalLines = Object.keys(lineColors).length;
+            const goodServiceLines = totalLines - linesWithIssues.size;
+
+            document.getElementById('criticalCount').textContent = stats.critical;
+            document.getElementById('warningCount').textContent = stats.warning;
+            document.getElementById('infoCount').textContent = stats.info;
+            document.getElementById('goodServiceCount').textContent = goodServiceLines;
+        }
+
+        function formatTimestamp(timestamp) {
+            const now = new Date();
+            const diff = now - timestamp;
+            const minutes = Math.floor(diff / 60000);
+            
+            if (minutes < 1) return 'Just now';
+            if (minutes < 60) return `${minutes} min ago`;
+            
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+            
+            return timestamp.toLocaleDateString();
+        }
+
+        // Auto-refresh every 2 minutes
+        setInterval(() => {
+            loadAlerts();
+        }, 120000);
+    </script>
+</body>
+</html>
