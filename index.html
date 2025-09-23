@@ -289,15 +289,54 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
+            height: 6px;
             border-radius: 16px 16px 0 0;
         }
 
-        .stat-card:nth-child(1)::before { background: #dc2626; }
-        .stat-card:nth-child(2)::before { background: #ea580c; }
-        .stat-card:nth-child(3)::before { background: var(--accent-blue); }
-        .stat-card:nth-child(4)::before { background: #16a34a; }
-        .stat-card:nth-child(5)::before { background: #7c3aed; }
+        .stat-card:nth-child(1) {
+            border: 2px solid #dc2626;
+        }
+
+        .stat-card:nth-child(1)::before { 
+            background: #dc2626;
+            box-shadow: 0 0 8px rgba(220, 38, 38, 0.4);
+        }
+
+        .stat-card:nth-child(2) {
+            border: 2px solid #ea580c;
+        }
+
+        .stat-card:nth-child(2)::before { 
+            background: #ea580c;
+            box-shadow: 0 0 6px rgba(234, 88, 12, 0.3);
+        }
+
+        .stat-card:nth-child(3) {
+            border: 2px solid var(--accent-blue);
+        }
+
+        .stat-card:nth-child(3)::before { 
+            background: var(--accent-blue);
+            box-shadow: 0 0 4px rgba(0, 48, 135, 0.2);
+        }
+
+        .stat-card:nth-child(4) {
+            border: 2px solid #16a34a;
+        }
+
+        .stat-card:nth-child(4)::before { 
+            background: #16a34a;
+            box-shadow: 0 0 4px rgba(22, 163, 74, 0.2);
+        }
+
+        .stat-card:nth-child(5) {
+            border: 2px solid #7c3aed;
+        }
+
+        .stat-card:nth-child(5)::before { 
+            background: #7c3aed;
+            box-shadow: 0 0 4px rgba(124, 58, 237, 0.2);
+        }
 
         .stat-number {
             font-size: 2.5rem;
@@ -315,10 +354,15 @@
         }
 
         .critical { color: #dc2626; }
-        .warning { color: #ea580c; }
+        .warning { color: #eab308; }
         .info { color: var(--accent-blue); }
         .good-service { color: #16a34a; }
         .rush-hour { color: #7c3aed; }
+
+        /* Specific override for warning stat number */
+        #warningCount {
+            color: #eab308 !important;
+        }
 
         .alerts-container {
             display: grid;
@@ -331,7 +375,7 @@
             box-shadow: var(--shadow-md);
             overflow: hidden;
             transition: all 0.2s ease;
-            border: 1px solid var(--border-color);
+            border: 3px solid var(--border-color);
             position: relative;
         }
 
@@ -346,13 +390,54 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
+            height: 8px;
             border-radius: 16px 16px 0 0;
         }
 
-        .alert-card.critical::before { background: #dc2626; }
-        .alert-card.warning::before { background: #ea580c; }
-        .alert-card.info::before { background: var(--accent-blue); }
+        .alert-card.critical {
+            border-color: #dc2626;
+            background: linear-gradient(to right, rgba(220, 38, 38, 0.05), var(--bg-secondary));
+        }
+
+        .alert-card.critical::before { 
+            background: #dc2626;
+            box-shadow: 0 0 12px rgba(220, 38, 38, 0.5);
+        }
+
+        .alert-card.critical .alert-header {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(220, 38, 38, 0.05));
+            border-left: 6px solid #dc2626;
+        }
+
+        .alert-card.warning {
+            border-color: #eab308;
+            background: linear-gradient(to right, rgba(234, 179, 8, 0.04), var(--bg-secondary));
+        }
+
+        .alert-card.warning::before { 
+            background: #eab308;
+            box-shadow: 0 0 10px rgba(234, 179, 8, 0.4);
+        }
+
+        .alert-card.warning .alert-header {
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.08), rgba(234, 179, 8, 0.03));
+            border-left: 6px solid #eab308;
+        }
+
+        .alert-card.info {
+            border-color: var(--accent-blue);
+            background: linear-gradient(to right, rgba(0, 48, 135, 0.02), var(--bg-secondary));
+        }
+
+        .alert-card.info::before { 
+            background: var(--accent-blue);
+            box-shadow: 0 0 8px rgba(0, 48, 135, 0.3);
+        }
+
+        .alert-card.info .alert-header {
+            background: linear-gradient(135deg, rgba(0, 48, 135, 0.06), rgba(0, 48, 135, 0.02));
+            border-left: 6px solid var(--accent-blue);
+        }
 
         .alert-header {
             padding: 20px 24px;
@@ -456,9 +541,46 @@
         .alert-title {
             font-size: 1.25rem;
             font-weight: 700;
-            color: var(--text-primary);
             margin-bottom: 12px;
             line-height: 1.4;
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .critical .alert-title {
+            color: #dc2626;
+        }
+
+        .critical .alert-title::before {
+            content: '🚨';
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 1.1rem;
+        }
+
+        .warning .alert-title {
+            color: #ea580c;
+        }
+
+        .warning .alert-title::before {
+            content: '⚠️';
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 1.1rem;
+        }
+
+        .info .alert-title {
+            color: var(--accent-blue);
+        }
+
+        .info .alert-title::before {
+            content: 'ℹ️';
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 1.1rem;
         }
 
         .alert-description {
@@ -1253,6 +1375,7 @@
                                 `).join('')}
                             </div>
                             <span class="severity-badge ${alert.severity}">
+                                <span class="severity-icon"></span>
                                 ${alert.severity}
                             </span>
                             ${alert.isRushHour ? '<span class="rush-hour-badge">Rush Hour</span>' : ''}
@@ -1267,7 +1390,7 @@
                         <p class="alert-description">${alert.description}</p>
                         <div class="alert-details">
                             <div><strong>Affected Stations:</strong> ${alert.affectedStations.join(', ')}</div>
-                            <div><strong>Service Reliability:</strong> ${alert.serviceReliability}%</div>
+                            <div><strong>Service Status:</strong> ${getServiceReliabilityEmoji(alert.serviceReliability)}</div>
                             ${alert.estimatedResolution ? `<div><strong>Est. Resolution:</strong> ${formatTime(alert.estimatedResolution)}</div>` : ''}
                             <div class="location-info">📍 ${alert.walkingDistance} away</div>
                         </div>
@@ -1407,6 +1530,14 @@
         }
 
         // Utility functions
+        function getServiceReliabilityEmoji(percentage) {
+            if (percentage >= 90) return '🟢 Excellent';
+            if (percentage >= 75) return '🟡 Good';
+            if (percentage >= 60) return '🟠 Fair';
+            if (percentage >= 40) return '🔴 Poor';
+            return '⛔ Very Poor';
+        }
+
         function clearPreferences() {
             localStorage.removeItem('subwayAlertsPreferences');
             favoriteLines.clear();
