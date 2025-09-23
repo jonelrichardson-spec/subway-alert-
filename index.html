@@ -12,8 +12,11 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f8fafc;
+            background-image: 
+                radial-gradient(circle at 100px 100px, rgba(0, 48, 135, 0.03) 1px, transparent 1px);
+            background-size: 200px 200px;
             min-height: 100vh;
             padding: 20px;
         }
@@ -24,76 +27,164 @@
         }
 
         .header {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 24px;
             text-align: center;
+            position: relative;
+            border: 1px solid #e2e8f0;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #FFD320 0%, #003087 50%, #FFD320 100%);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .header::after {
+            content: 'NYC Transit';
+            position: absolute;
+            top: 16px;
+            right: 24px;
+            color: #64748b;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
         .header h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
+            color: #1e293b;
+            margin-bottom: 8px;
             font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
         }
 
         .header p {
-            color: #7f8c8d;
-            font-size: 1.1rem;
+            color: #64748b;
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        .header::after {
+            content: 'MetroCard';
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            color: #003087;
+            font-size: 0.7rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .header h1 {
+            color: #003087;
+            margin-bottom: 8px;
+            font-size: 2.2rem;
+            font-weight: 900;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+            letter-spacing: -1px;
+        }
+
+        .header p {
+            color: #003087;
+            font-size: 1rem;
+            font-weight: 600;
         }
 
         .controls {
             background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 24px;
             display: flex;
-            gap: 15px;
+            gap: 24px;
             align-items: center;
             flex-wrap: wrap;
+            border: 1px solid #e2e8f0;
+            position: relative;
+        }
+
+        .controls::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #003087 0%, #FFD320 100%);
+            border-radius: 16px 16px 0 0;
         }
 
         .control-group {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 8px;
         }
 
         .control-group label {
             font-weight: 600;
-            color: #2c3e50;
-            font-size: 0.9rem;
+            color: #374151;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         select, button {
-            padding: 10px 15px;
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+            padding: 12px 16px;
+            border: 2px solid #d1d5db;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            background: white;
+            color: #374151;
         }
 
         select:focus, button:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+            border-color: #003087;
+            box-shadow: 0 0 0 3px rgba(0, 48, 135, 0.1);
+        }
+
+        select:hover {
+            border-color: #9ca3af;
         }
 
         .refresh-btn {
-            background: #667eea;
+            background: #003087;
             color: white;
-            border: none;
+            border: 2px solid #003087;
             cursor: pointer;
             font-weight: 600;
-            padding: 12px 20px;
+            padding: 12px 24px;
             margin-left: auto;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.875rem;
+            position: relative;
+            overflow: hidden;
         }
 
         .refresh-btn:hover {
-            background: #5a6fd8;
-            transform: translateY(-2px);
+            background: #001d3d;
+            border-color: #001d3d;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
         .stats {
@@ -105,29 +196,58 @@
 
         .stat-card {
             background: white;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+                0 2px 4px -1px rgba(0, 0, 0, 0.06);
             text-align: center;
+            border: 1px solid #e2e8f0;
+            position: relative;
+            transition: all 0.2s ease;
         }
+
+        .stat-card:hover {
+            box-shadow: 
+                0 10px 15px -3px rgba(0, 0, 0, 0.1), 
+                0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            border-radius: 16px 16px 0 0;
+        }
+
+        .stat-card:nth-child(1)::before { background: #dc2626; }
+        .stat-card:nth-child(2)::before { background: #ea580c; }
+        .stat-card:nth-child(3)::before { background: #003087; }
+        .stat-card:nth-child(4)::before { background: #16a34a; }
 
         .stat-number {
             font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 5px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -0.025em;
         }
 
         .stat-label {
-            color: #7f8c8d;
-            font-size: 0.9rem;
+            color: #64748b;
+            font-size: 0.875rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.05em;
+            font-weight: 600;
         }
 
-        .critical { color: #e74c3c; }
-        .warning { color: #f39c12; }
-        .info { color: #3498db; }
-        .good-service { color: #27ae60; }
+        .critical { color: #dc2626; }
+        .warning { color: #ea580c; }
+        .info { color: #003087; }
+        .good-service { color: #16a34a; }
 
         .alerts-container {
             display: grid;
@@ -136,121 +256,168 @@
 
         .alert-card {
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+                0 2px 4px -1px rgba(0, 0, 0, 0.06);
             overflow: hidden;
-            transition: all 0.3s ease;
-            border-left: 5px solid;
+            transition: all 0.2s ease;
+            border: 1px solid #e2e8f0;
+            position: relative;
         }
 
         .alert-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 
+                0 10px 15px -3px rgba(0, 0, 0, 0.1), 
+                0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
         }
 
-        .alert-card.critical {
-            border-left-color: #e74c3c;
+        .alert-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            border-radius: 16px 16px 0 0;
         }
 
-        .alert-card.warning {
-            border-left-color: #f39c12;
-        }
-
-        .alert-card.info {
-            border-left-color: #3498db;
-        }
+        .alert-card.critical::before { background: #dc2626; }
+        .alert-card.warning::before { background: #ea580c; }
+        .alert-card.info::before { background: #003087; }
 
         .alert-header {
-            padding: 15px 20px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #e9ecef;
+            padding: 20px 24px;
+            background: #f8fafc;
+            border-bottom: 1px solid #e2e8f0;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 16px;
         }
 
         .alert-lines {
             display: flex;
-            gap: 5px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
         .line-badge {
-            padding: 5px 10px;
-            border-radius: 15px;
+            padding: 6px 12px;
+            border-radius: 12px;
             color: white;
-            font-weight: bold;
-            font-size: 0.8rem;
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
         }
 
         .severity-badge {
-            padding: 5px 12px;
+            padding: 6px 12px;
             border-radius: 12px;
             color: white;
-            font-size: 0.8rem;
+            font-size: 0.8125rem;
             font-weight: 600;
             text-transform: uppercase;
+            letter-spacing: 0.025em;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
-        .severity-badge.critical { background: #e74c3c; }
-        .severity-badge.warning { background: #f39c12; }
-        .severity-badge.info { background: #3498db; }
+        .severity-badge.critical { background: #dc2626; }
+        .severity-badge.warning { background: #ea580c; }
+        .severity-badge.info { background: #003087; }
 
         .alert-content {
-            padding: 20px;
+            padding: 24px;
+            background: white;
         }
 
         .alert-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 10px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 12px;
+            line-height: 1.4;
         }
 
         .alert-description {
-            color: #5a6c7d;
+            color: #475569;
             line-height: 1.6;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            font-weight: 400;
         }
 
         .alert-footer {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
-            font-size: 0.9rem;
-            color: #7f8c8d;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #e9ecef;
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e2e8f0;
+            font-weight: 500;
         }
 
         .timestamp {
-            font-weight: 500;
+            font-weight: 600;
+            letter-spacing: 0.025em;
         }
 
         .no-alerts {
             text-align: center;
-            padding: 40px;
-            color: #7f8c8d;
+            padding: 48px 24px;
+            color: #64748b;
         }
 
         .no-alerts h3 {
-            color: #27ae60;
-            margin-bottom: 10px;
+            color: #16a34a;
+            margin-bottom: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .no-alerts p {
+            font-weight: 500;
+            font-size: 1.125rem;
         }
 
         .loading {
             text-align: center;
-            padding: 40px;
+            padding: 48px 24px;
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            position: relative;
+        }
+
+        .loading::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #003087 0%, #FFD320 100%);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .loading p {
+            color: #64748b;
+            font-weight: 600;
+            font-size: 1.125rem;
         }
 
         .spinner {
             width: 40px;
             height: 40px;
-            border: 4px solid #e9ecef;
-            border-top: 4px solid #667eea;
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #003087;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 20px;
@@ -262,18 +429,33 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
             .controls {
                 flex-direction: column;
                 align-items: stretch;
+                gap: 15px;
             }
             
             .refresh-btn {
                 margin-left: 0;
+                align-self: center;
             }
             
             .alert-header {
                 flex-direction: column;
                 align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .stat-number {
+                font-size: 2rem;
             }
         }
     </style>
@@ -415,12 +597,90 @@
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
             setupEventListeners();
+            loadUserPreferences();
             loadAlerts();
         });
 
         function setupEventListeners() {
-            document.getElementById('lineFilter').addEventListener('change', applyFilters);
-            document.getElementById('severityFilter').addEventListener('change', applyFilters);
+            document.getElementById('lineFilter').addEventListener('change', function() {
+                saveUserPreferences();
+                applyFilters();
+            });
+            document.getElementById('severityFilter').addEventListener('change', function() {
+                saveUserPreferences();
+                applyFilters();
+            });
+        }
+
+        // Save user preferences to localStorage
+        function saveUserPreferences() {
+            const preferences = {
+                lineFilter: document.getElementById('lineFilter').value,
+                severityFilter: document.getElementById('severityFilter').value,
+                lastUpdated: new Date().toISOString()
+            };
+            localStorage.setItem('subwayAlertsPreferences', JSON.stringify(preferences));
+        }
+
+        // Load user preferences from localStorage
+        function loadUserPreferences() {
+            const saved = localStorage.getItem('subwayAlertsPreferences');
+            if (saved) {
+                try {
+                    const preferences = JSON.parse(saved);
+                    document.getElementById('lineFilter').value = preferences.lineFilter || 'all';
+                    document.getElementById('severityFilter').value = preferences.severityFilter || 'all';
+                    
+                    // Show user their preferences were restored
+                    if (preferences.lastUpdated) {
+                        const lastUpdated = new Date(preferences.lastUpdated);
+                        const timeDiff = new Date() - lastUpdated;
+                        const minutesAgo = Math.floor(timeDiff / 60000);
+                        
+                        if (minutesAgo < 60) {
+                            showNotification(`Filters restored from ${minutesAgo} minutes ago`, 'info');
+                        }
+                    }
+                } catch (error) {
+                    console.log('Could not load saved preferences');
+                }
+            }
+        }
+
+        // Show notification to user
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'info' ? '#003087' : '#16a34a'};
+                color: white;
+                padding: 12px 20px;
+                border-radius: 12px;
+                font-weight: 600;
+                font-size: 0.875rem;
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+                z-index: 1000;
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
         }
 
         // Simulate API call to load alerts
