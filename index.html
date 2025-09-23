@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NYC Subway Alerts</title>
+    <title>NYC Subway Alerts Pro</title>
     <style>
         * {
             margin: 0;
@@ -11,32 +11,54 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --accent-blue: #003087;
+            --accent-yellow: #FFD320;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #f8fafc;
-            background-image: 
-                radial-gradient(circle at 100px 100px, rgba(0, 48, 135, 0.03) 1px, transparent 1px);
-            background-size: 200px 200px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
             padding: 20px;
+            transition: all 0.3s ease;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
         .header {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            background: var(--bg-secondary);
             padding: 30px;
             border-radius: 16px;
-            box-shadow: 
-                0 4px 6px -1px rgba(0, 0, 0, 0.1), 
-                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: var(--shadow-md);
             margin-bottom: 24px;
             text-align: center;
             position: relative;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border-color);
         }
 
         .header::before {
@@ -46,24 +68,36 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(90deg, #FFD320 0%, #003087 50%, #FFD320 100%);
+            background: linear-gradient(90deg, var(--accent-yellow) 0%, var(--accent-blue) 50%, var(--accent-yellow) 100%);
             border-radius: 16px 16px 0 0;
         }
 
-        .header::after {
-            content: 'NYC Transit';
+        .header-controls {
             position: absolute;
             top: 16px;
             right: 24px;
-            color: #64748b;
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .theme-toggle, .font-size-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+        }
+
+        .theme-toggle:hover, .font-size-btn:hover {
+            background: var(--bg-tertiary);
         }
 
         .header h1 {
-            color: #1e293b;
+            color: var(--text-primary);
             margin-bottom: 8px;
             font-size: 2.5rem;
             font-weight: 800;
@@ -71,51 +105,28 @@
         }
 
         .header p {
-            color: #64748b;
+            color: var(--text-secondary);
             font-size: 1.125rem;
             font-weight: 500;
         }
 
-        .header::after {
-            content: 'MetroCard';
-            position: absolute;
-            top: 15px;
-            right: 25px;
-            color: #003087;
-            font-size: 0.7rem;
-            font-weight: bold;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .header h1 {
-            color: #003087;
-            margin-bottom: 8px;
-            font-size: 2.2rem;
-            font-weight: 900;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-            letter-spacing: -1px;
-        }
-
-        .header p {
-            color: #003087;
-            font-size: 1rem;
-            font-weight: 600;
+        .top-controls {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 24px;
+            margin-bottom: 24px;
         }
 
         .controls {
-            background: white;
+            background: var(--bg-secondary);
             padding: 24px;
             border-radius: 16px;
-            box-shadow: 
-                0 4px 6px -1px rgba(0, 0, 0, 0.1), 
-                0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            margin-bottom: 24px;
+            box-shadow: var(--shadow-md);
             display: flex;
             gap: 24px;
             align-items: center;
             flex-wrap: wrap;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border-color);
             position: relative;
         }
 
@@ -126,8 +137,20 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, #003087 0%, #FFD320 100%);
+            background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-yellow) 100%);
             border-radius: 16px 16px 0 0;
+        }
+
+        .quick-actions {
+            background: var(--bg-secondary);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-width: 200px;
         }
 
         .control-group {
@@ -138,7 +161,7 @@
 
         .control-group label {
             font-weight: 600;
-            color: #374151;
+            color: var(--text-primary);
             font-size: 0.875rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -146,71 +169,117 @@
 
         select, button {
             padding: 12px 16px;
-            border: 2px solid #d1d5db;
+            border: 2px solid var(--border-color);
             border-radius: 12px;
             font-size: 0.95rem;
             font-weight: 500;
             transition: all 0.2s ease;
-            background: white;
-            color: #374151;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
         }
 
         select:focus, button:focus {
             outline: none;
-            border-color: #003087;
+            border-color: var(--accent-blue);
             box-shadow: 0 0 0 3px rgba(0, 48, 135, 0.1);
         }
 
         select:hover {
-            border-color: #9ca3af;
+            border-color: var(--text-muted);
         }
 
-        .refresh-btn {
-            background: #003087;
+        .btn-primary {
+            background: var(--accent-blue);
             color: white;
-            border: 2px solid #003087;
+            border: 2px solid var(--accent-blue);
             cursor: pointer;
             font-weight: 600;
-            padding: 12px 24px;
-            margin-left: auto;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             font-size: 0.875rem;
-            position: relative;
-            overflow: hidden;
         }
 
-        .refresh-btn:hover {
+        .btn-primary:hover {
             background: #001d3d;
             border-color: #001d3d;
             transform: translateY(-1px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        .favorites-section {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+        }
+
+        .favorites-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .favorite-lines {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .favorite-line {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .remove-favorite {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0;
+            font-size: 0.75rem;
         }
 
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 16px;
+            margin-bottom: 24px;
         }
 
         .stat-card {
-            background: white;
+            background: var(--bg-secondary);
             padding: 24px;
             border-radius: 16px;
-            box-shadow: 
-                0 4px 6px -1px rgba(0, 0, 0, 0.1), 
-                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: var(--shadow-md);
             text-align: center;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border-color);
             position: relative;
             transition: all 0.2s ease;
         }
 
         .stat-card:hover {
-            box-shadow: 
-                0 10px 15px -3px rgba(0, 0, 0, 0.1), 
-                0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--shadow-lg);
             transform: translateY(-2px);
         }
 
@@ -226,8 +295,9 @@
 
         .stat-card:nth-child(1)::before { background: #dc2626; }
         .stat-card:nth-child(2)::before { background: #ea580c; }
-        .stat-card:nth-child(3)::before { background: #003087; }
+        .stat-card:nth-child(3)::before { background: var(--accent-blue); }
         .stat-card:nth-child(4)::before { background: #16a34a; }
+        .stat-card:nth-child(5)::before { background: #7c3aed; }
 
         .stat-number {
             font-size: 2.5rem;
@@ -237,7 +307,7 @@
         }
 
         .stat-label {
-            color: #64748b;
+            color: var(--text-muted);
             font-size: 0.875rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -246,30 +316,27 @@
 
         .critical { color: #dc2626; }
         .warning { color: #ea580c; }
-        .info { color: #003087; }
+        .info { color: var(--accent-blue); }
         .good-service { color: #16a34a; }
+        .rush-hour { color: #7c3aed; }
 
         .alerts-container {
             display: grid;
-            gap: 15px;
+            gap: 16px;
         }
 
         .alert-card {
-            background: white;
+            background: var(--bg-secondary);
             border-radius: 16px;
-            box-shadow: 
-                0 4px 6px -1px rgba(0, 0, 0, 0.1), 
-                0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: var(--shadow-md);
             overflow: hidden;
             transition: all 0.2s ease;
-            border: 1px solid #e2e8f0;
+            border: 1px solid var(--border-color);
             position: relative;
         }
 
         .alert-card:hover {
-            box-shadow: 
-                0 10px 15px -3px rgba(0, 0, 0, 0.1), 
-                0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--shadow-lg);
             transform: translateY(-2px);
         }
 
@@ -285,17 +352,24 @@
 
         .alert-card.critical::before { background: #dc2626; }
         .alert-card.warning::before { background: #ea580c; }
-        .alert-card.info::before { background: #003087; }
+        .alert-card.info::before { background: var(--accent-blue); }
 
         .alert-header {
             padding: 20px 24px;
-            background: #f8fafc;
-            border-bottom: 1px solid #e2e8f0;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 16px;
+        }
+
+        .alert-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
         }
 
         .alert-lines {
@@ -312,6 +386,22 @@
             font-size: 0.875rem;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
             border: 2px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        .favorite-star {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #fbbf24;
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
         }
 
         .severity-badge {
@@ -327,26 +417,66 @@
 
         .severity-badge.critical { background: #dc2626; }
         .severity-badge.warning { background: #ea580c; }
-        .severity-badge.info { background: #003087; }
+        .severity-badge.info { background: var(--accent-blue); }
+
+        .rush-hour-badge {
+            background: #7c3aed;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .alert-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
 
         .alert-content {
             padding: 24px;
-            background: white;
         }
 
         .alert-title {
             font-size: 1.25rem;
             font-weight: 700;
-            color: #1e293b;
+            color: var(--text-primary);
             margin-bottom: 12px;
             line-height: 1.4;
         }
 
         .alert-description {
-            color: #475569;
+            color: var(--text-secondary);
             line-height: 1.6;
             margin-bottom: 20px;
             font-weight: 400;
+        }
+
+        .alert-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 16px 0;
+            padding: 16px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            font-size: 0.875rem;
         }
 
         .alert-footer {
@@ -354,70 +484,56 @@
             justify-content: space-between;
             align-items: center;
             font-size: 0.875rem;
-            color: #64748b;
+            color: var(--text-muted);
             margin-top: 16px;
             padding-top: 16px;
-            border-top: 1px solid #e2e8f0;
+            border-top: 1px solid var(--border-color);
             font-weight: 500;
         }
 
-        .timestamp {
+        .location-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-blue);
             font-weight: 600;
-            letter-spacing: 0.025em;
         }
 
-        .no-alerts {
-            text-align: center;
-            padding: 48px 24px;
-            color: #64748b;
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--accent-blue);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            box-shadow: var(--shadow-lg);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
         }
 
-        .no-alerts h3 {
-            color: #16a34a;
-            margin-bottom: 12px;
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .no-alerts p {
-            font-weight: 500;
-            font-size: 1.125rem;
-        }
+        .notification.success { background: #16a34a; }
+        .notification.warning { background: #ea580c; }
+        .notification.error { background: #dc2626; }
 
         .loading {
             text-align: center;
             padding: 48px 24px;
-            background: white;
+            background: var(--bg-secondary);
             border-radius: 16px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 
-                0 4px 6px -1px rgba(0, 0, 0, 0.1), 
-                0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            position: relative;
-        }
-
-        .loading::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #003087 0%, #FFD320 100%);
-            border-radius: 16px 16px 0 0;
-        }
-
-        .loading p {
-            color: #64748b;
-            font-weight: 600;
-            font-size: 1.125rem;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-md);
         }
 
         .spinner {
             width: 40px;
             height: 40px;
-            border: 3px solid #e2e8f0;
-            border-top: 3px solid #003087;
+            border: 3px solid var(--border-color);
+            border-top: 3px solid var(--accent-blue);
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 20px;
@@ -428,6 +544,67 @@
             100% { transform: rotate(360deg); }
         }
 
+        .sound-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+        }
+
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: var(--border-color);
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-switch.active {
+            background: var(--accent-blue);
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .toggle-switch.active::after {
+            transform: translateX(20px);
+        }
+
+        .export-section {
+            margin-top: 24px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 1024px) {
+            .top-controls {
+                grid-template-columns: 1fr;
+            }
+            
+            .alert-details {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 768px) {
             body {
                 padding: 15px;
@@ -436,68 +613,130 @@
             .controls {
                 flex-direction: column;
                 align-items: stretch;
-                gap: 15px;
+                gap: 16px;
             }
             
-            .refresh-btn {
-                margin-left: 0;
-                align-self: center;
+            .header-controls {
+                position: static;
+                justify-content: center;
+                margin-bottom: 16px;
+            }
+            
+            .header h1 {
+                font-size: 1.875rem;
             }
             
             .alert-header {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 15px;
+                gap: 12px;
             }
             
-            .header h1 {
-                font-size: 1.8rem;
+            .export-buttons {
+                justify-content: center;
             }
-            
-            .stat-number {
-                font-size: 2rem;
-            }
+        }
+
+        /* Font size variations */
+        .font-small { font-size: 0.875rem; }
+        .font-normal { font-size: 1rem; }
+        .font-large { font-size: 1.125rem; }
+
+        /* Print styles */
+        @media print {
+            body { background: white; color: black; }
+            .header-controls, .controls, .export-section { display: none; }
+            .alert-card { break-inside: avoid; margin-bottom: 20px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="header">
-            <h1>🚇 NYC Subway Alerts</h1>
-            <p>Real-time service alerts and updates for New York City Transit</p>
+            <div class="header-controls">
+                <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark</button>
+                <select class="font-size-btn" onchange="changeFontSize(this.value)">
+                    <option value="normal">Normal Text</option>
+                    <option value="large">Large Text</option>
+                    <option value="small">Small Text</option>
+                </select>
+            </div>
+            <h1>🚇 NYC Subway Alerts Pro</h1>
+            <p>Real-time service alerts with smart features and accessibility</p>
         </header>
 
-        <div class="controls">
-            <div class="control-group">
-                <label for="lineFilter">Filter by Line:</label>
-                <select id="lineFilter">
-                    <option value="all">All Lines</option>
-                    <option value="123">1, 2, 3</option>
-                    <option value="456">4, 5, 6</option>
-                    <option value="7">7</option>
-                    <option value="ACE">A, C, E</option>
-                    <option value="BDFM">B, D, F, M</option>
-                    <option value="G">G</option>
-                    <option value="JZ">J, Z</option>
-                    <option value="L">L</option>
-                    <option value="NQR">N, Q, R, W</option>
-                    <option value="S">S (Shuttle)</option>
-                </select>
+        <div class="favorites-section">
+            <div class="favorites-header">
+                <h3>⭐ Favorite Lines</h3>
+                <div class="sound-toggle">
+                    <span>🔊 Alert Sounds</span>
+                    <div class="toggle-switch" onclick="toggleSounds()" id="soundToggle"></div>
+                </div>
+            </div>
+            <div class="favorite-lines" id="favoriteLines">
+                <span style="color: var(--text-muted); font-style: italic;">Click ⭐ on line badges to add favorites</span>
+            </div>
+        </div>
+
+        <div class="top-controls">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="lineFilter">Filter by Line:</label>
+                    <select id="lineFilter">
+                        <option value="all">All Lines</option>
+                        <option value="favorites">⭐ Favorites Only</option>
+                        <option value="123">1, 2, 3</option>
+                        <option value="456">4, 5, 6</option>
+                        <option value="7">7</option>
+                        <option value="ACE">A, C, E</option>
+                        <option value="BDFM">B, D, F, M</option>
+                        <option value="G">G</option>
+                        <option value="JZ">J, Z</option>
+                        <option value="L">L</option>
+                        <option value="NQR">N, Q, R, W</option>
+                        <option value="S">S (Shuttle)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="severityFilter">Filter by Severity:</label>
+                    <select id="severityFilter">
+                        <option value="all">All Severities</option>
+                        <option value="critical">Critical Only</option>
+                        <option value="warning">Warnings</option>
+                        <option value="info">Info</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="timeFilter">Time Filter:</label>
+                    <select id="timeFilter">
+                        <option value="all">All Times</option>
+                        <option value="active">Active Now</option>
+                        <option value="rush">Rush Hour Impact</option>
+                        <option value="planned">Planned Work</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="locationFilter">Location:</label>
+                    <select id="locationFilter">
+                        <option value="all">All Areas</option>
+                        <option value="nearme">📍 Near Me</option>
+                        <option value="manhattan">Manhattan</option>
+                        <option value="brooklyn">Brooklyn</option>
+                        <option value="queens">Queens</option>
+                        <option value="bronx">Bronx</option>
+                    </select>
+                </div>
             </div>
 
-            <div class="control-group">
-                <label for="severityFilter">Filter by Severity:</label>
-                <select id="severityFilter">
-                    <option value="all">All Severities</option>
-                    <option value="critical">Critical</option>
-                    <option value="warning">Warning</option>
-                    <option value="info">Info</option>
-                </select>
+            <div class="quick-actions">
+                <button class="btn-primary" onclick="refreshAlerts()">🔄 Refresh</button>
+                <button class="btn-secondary" onclick="toggleRushHourMode()">⏰ Rush Mode</button>
+                <button class="btn-secondary" onclick="clearPreferences()">🗑️ Reset</button>
+                <button class="btn-secondary" onclick="requestLocation()">📍 Near Me</button>
             </div>
-
-            <button class="refresh-btn" onclick="loadAlerts()">
-                🔄 Refresh Alerts
-            </button>
         </div>
 
         <div class="stats">
@@ -517,12 +756,26 @@
                 <div class="stat-number good-service" id="goodServiceCount">0</div>
                 <div class="stat-label">Good Service</div>
             </div>
+            <div class="stat-card">
+                <div class="stat-number rush-hour" id="rushHourCount">0</div>
+                <div class="stat-label">Rush Hour Alerts</div>
+            </div>
         </div>
 
         <div id="alertsContainer" class="alerts-container">
             <div class="loading">
                 <div class="spinner"></div>
                 <p>Loading subway alerts...</p>
+            </div>
+        </div>
+
+        <div class="export-section">
+            <h3>📤 Export & Share</h3>
+            <div class="export-buttons">
+                <button class="btn-secondary" onclick="exportAlerts('json')">📄 Export JSON</button>
+                <button class="btn-secondary" onclick="exportAlerts('csv')">📊 Export CSV</button>
+                <button class="btn-secondary" onclick="printAlerts()">🖨️ Print View</button>
+                <button class="btn-secondary" onclick="shareAlert()">📱 Share Summary</button>
             </div>
         </div>
     </div>
@@ -542,7 +795,7 @@
             'S': '#808183'
         };
 
-        // Simulated alert data (in real app, this would come from MTA API)
+        // Enhanced simulated alert data with more realistic features
         const simulatedAlerts = [
             {
                 id: '1',
@@ -550,8 +803,13 @@
                 description: 'Due to signal problems at Union Square, expect delays in both directions. Trains are operating with increased travel time of 15-20 minutes.',
                 lines: ['4', '5', '6'],
                 severity: 'critical',
-                timestamp: new Date(Date.now() - 1800000), // 30 minutes ago
-                affectedStations: ['Union Sq', '14 St', 'Astor Pl']
+                timestamp: new Date(Date.now() - 1800000),
+                affectedStations: ['Union Sq', '14 St', 'Astor Pl'],
+                estimatedResolution: new Date(Date.now() + 3600000),
+                isRushHour: true,
+                location: 'manhattan',
+                serviceReliability: 65,
+                walkingDistance: '0.3 miles'
             },
             {
                 id: '2',
@@ -559,8 +817,13 @@
                 description: 'L train is not running between 14 St-Union Sq and 8 Av due to planned maintenance work. Free shuttle bus service is available.',
                 lines: ['L'],
                 severity: 'warning',
-                timestamp: new Date(Date.now() - 3600000), // 1 hour ago
-                affectedStations: ['14 St-Union Sq', '8 Av', '6 Av']
+                timestamp: new Date(Date.now() - 3600000),
+                affectedStations: ['14 St-Union Sq', '8 Av', '6 Av'],
+                estimatedResolution: new Date(Date.now() + 14400000),
+                isRushHour: false,
+                location: 'manhattan',
+                serviceReliability: 45,
+                walkingDistance: '0.5 miles'
             },
             {
                 id: '3',
@@ -568,8 +831,13 @@
                 description: 'N and Q trains are running local in Manhattan due to track work. Allow extra travel time.',
                 lines: ['N', 'Q'],
                 severity: 'warning',
-                timestamp: new Date(Date.now() - 900000), // 15 minutes ago
-                affectedStations: ['Times Sq', 'Herald Sq', 'Union Sq']
+                timestamp: new Date(Date.now() - 900000),
+                affectedStations: ['Times Sq', 'Herald Sq', 'Union Sq'],
+                estimatedResolution: new Date(Date.now() + 7200000),
+                isRushHour: true,
+                location: 'manhattan',
+                serviceReliability: 75,
+                walkingDistance: '0.2 miles'
             },
             {
                 id: '4',
@@ -577,8 +845,13 @@
                 description: 'Elevator at 59 St-Columbus Circle is back in service. All station levels are now accessible.',
                 lines: ['A', 'B', 'C', 'D'],
                 severity: 'info',
-                timestamp: new Date(Date.now() - 600000), // 10 minutes ago
-                affectedStations: ['59 St-Columbus Circle']
+                timestamp: new Date(Date.now() - 600000),
+                affectedStations: ['59 St-Columbus Circle'],
+                estimatedResolution: null,
+                isRushHour: false,
+                location: 'manhattan',
+                serviceReliability: 95,
+                walkingDistance: '0.8 miles'
             },
             {
                 id: '5',
@@ -586,19 +859,46 @@
                 description: 'Additional 6 express trains are running during evening rush hours to reduce crowding.',
                 lines: ['6'],
                 severity: 'info',
-                timestamp: new Date(Date.now() - 1200000), // 20 minutes ago
-                affectedStations: ['Multiple stations']
+                timestamp: new Date(Date.now() - 1200000),
+                affectedStations: ['Multiple stations'],
+                estimatedResolution: new Date(Date.now() + 1800000),
+                isRushHour: true,
+                location: 'manhattan',
+                serviceReliability: 85,
+                walkingDistance: '0.1 miles'
+            },
+            {
+                id: '6',
+                title: 'Brooklyn Service Alert',
+                description: 'F train experiencing minor delays due to train traffic ahead. Expect 5-10 minute delays.',
+                lines: ['F'],
+                severity: 'warning',
+                timestamp: new Date(Date.now() - 2700000),
+                affectedStations: ['Jay St', 'Borough Hall', 'Court St'],
+                estimatedResolution: new Date(Date.now() + 1800000),
+                isRushHour: false,
+                location: 'brooklyn',
+                serviceReliability: 80,
+                walkingDistance: '1.2 miles'
             }
         ];
 
+        // Global state
         let currentAlerts = [];
         let filteredAlerts = [];
+        let favoriteLines = new Set();
+        let soundEnabled = false;
+        let rushHourMode = false;
+        let userLocation = null;
+        let currentTheme = 'light';
+        let currentFontSize = 'normal';
 
         // Initialize the app
         document.addEventListener('DOMContentLoaded', function() {
             setupEventListeners();
             loadUserPreferences();
             loadAlerts();
+            requestNotificationPermission();
         });
 
         function setupEventListeners() {
@@ -610,19 +910,33 @@
                 saveUserPreferences();
                 applyFilters();
             });
+            document.getElementById('timeFilter').addEventListener('change', function() {
+                saveUserPreferences();
+                applyFilters();
+            });
+            document.getElementById('locationFilter').addEventListener('change', function() {
+                saveUserPreferences();
+                applyFilters();
+            });
         }
 
-        // Save user preferences to localStorage
+        // Enhanced preference management
         function saveUserPreferences() {
             const preferences = {
                 lineFilter: document.getElementById('lineFilter').value,
                 severityFilter: document.getElementById('severityFilter').value,
+                timeFilter: document.getElementById('timeFilter').value,
+                locationFilter: document.getElementById('locationFilter').value,
+                favoriteLines: Array.from(favoriteLines),
+                soundEnabled: soundEnabled,
+                theme: currentTheme,
+                fontSize: currentFontSize,
+                rushHourMode: rushHourMode,
                 lastUpdated: new Date().toISOString()
             };
             localStorage.setItem('subwayAlertsPreferences', JSON.stringify(preferences));
         }
 
-        // Load user preferences from localStorage
         function loadUserPreferences() {
             const saved = localStorage.getItem('subwayAlertsPreferences');
             if (saved) {
@@ -630,15 +944,28 @@
                     const preferences = JSON.parse(saved);
                     document.getElementById('lineFilter').value = preferences.lineFilter || 'all';
                     document.getElementById('severityFilter').value = preferences.severityFilter || 'all';
+                    document.getElementById('timeFilter').value = preferences.timeFilter || 'all';
+                    document.getElementById('locationFilter').value = preferences.locationFilter || 'all';
                     
-                    // Show user their preferences were restored
+                    favoriteLines = new Set(preferences.favoriteLines || []);
+                    soundEnabled = preferences.soundEnabled || false;
+                    currentTheme = preferences.theme || 'light';
+                    currentFontSize = preferences.fontSize || 'normal';
+                    rushHourMode = preferences.rushHourMode || false;
+                    
+                    // Apply saved preferences
+                    applyTheme(currentTheme);
+                    applySoundSettings();
+                    applyFontSize(currentFontSize);
+                    updateFavoriteLines();
+                    
                     if (preferences.lastUpdated) {
                         const lastUpdated = new Date(preferences.lastUpdated);
                         const timeDiff = new Date() - lastUpdated;
                         const minutesAgo = Math.floor(timeDiff / 60000);
                         
                         if (minutesAgo < 60) {
-                            showNotification(`Filters restored from ${minutesAgo} minutes ago`, 'info');
+                            showNotification(`Settings restored from ${minutesAgo} minutes ago`, 'info');
                         }
                     }
                 } catch (error) {
@@ -647,70 +974,208 @@
             }
         }
 
-        // Show notification to user
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: ${type === 'info' ? '#003087' : '#16a34a'};
-                color: white;
-                padding: 12px 20px;
-                border-radius: 12px;
-                font-weight: 600;
-                font-size: 0.875rem;
-                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-                z-index: 1000;
-                opacity: 0;
-                transform: translateX(100%);
-                transition: all 0.3s ease;
-            `;
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            // Animate in
-            setTimeout(() => {
-                notification.style.opacity = '1';
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-            
-            // Remove after 3 seconds
-            setTimeout(() => {
-                notification.style.opacity = '0';
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
+        // Theme functionality
+        function toggleTheme() {
+            currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+            applyTheme(currentTheme);
+            saveUserPreferences();
         }
 
-        // Simulate API call to load alerts
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            const toggle = document.querySelector('.theme-toggle');
+            toggle.textContent = theme === 'light' ? '🌙 Dark' : '☀️ Light';
+        }
+
+        // Font size functionality
+        function changeFontSize(size) {
+            currentFontSize = size;
+            applyFontSize(size);
+            saveUserPreferences();
+        }
+
+        function applyFontSize(size) {
+            document.body.className = document.body.className.replace(/font-\w+/g, '');
+            document.body.classList.add(`font-${size}`);
+        }
+
+        // Favorite lines functionality
+        function toggleFavoriteLine(line) {
+            if (favoriteLines.has(line)) {
+                favoriteLines.delete(line);
+                playSound('remove');
+            } else {
+                favoriteLines.add(line);
+                playSound('add');
+            }
+            updateFavoriteLines();
+            saveUserPreferences();
+            applyFilters();
+        }
+
+        function updateFavoriteLines() {
+            const container = document.getElementById('favoriteLines');
+            if (favoriteLines.size === 0) {
+                container.innerHTML = '<span style="color: var(--text-muted); font-style: italic;">Click ⭐ on line badges to add favorites</span>';
+                return;
+            }
+            
+            container.innerHTML = Array.from(favoriteLines).map(line => `
+                <div class="favorite-line">
+                    <span class="line-badge" style="background-color: ${lineColors[line] || '#666'}; padding: 4px 8px; font-size: 0.75rem;">
+                        ${line}
+                    </span>
+                    <button class="remove-favorite" onclick="toggleFavoriteLine('${line}')">×</button>
+                </div>
+            `).join('');
+        }
+
+        // Sound functionality
+        function toggleSounds() {
+            soundEnabled = !soundEnabled;
+            applySoundSettings();
+            saveUserPreferences();
+            showNotification(`Sounds ${soundEnabled ? 'enabled' : 'disabled'}`, 'info');
+        }
+
+        function applySoundSettings() {
+            const toggle = document.getElementById('soundToggle');
+            toggle.classList.toggle('active', soundEnabled);
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            
+            // Create different sounds for different events
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            const frequencies = {
+                'critical': 800,
+                'warning': 600,
+                'info': 400,
+                'add': 500,
+                'remove': 300,
+                'refresh': 700
+            };
+            
+            oscillator.frequency.setValueAtTime(frequencies[type] || 500, audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.2);
+        }
+
+        // Location functionality
+        function requestLocation() {
+            if ('geolocation' in navigator) {
+                showNotification('Getting your location...', 'info');
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        showNotification('Location found! Filtering nearby alerts.', 'success');
+                        document.getElementById('locationFilter').value = 'nearme';
+                        applyFilters();
+                        saveUserPreferences();
+                    },
+                    error => {
+                        showNotification('Could not get location. Please enable location services.', 'error');
+                    }
+                );
+            } else {
+                showNotification('Location not supported by your browser.', 'error');
+            }
+        }
+
+        // Rush hour mode
+        function toggleRushHourMode() {
+            rushHourMode = !rushHourMode;
+            const button = event.target;
+            button.style.background = rushHourMode ? 'var(--accent-blue)' : '';
+            button.style.color = rushHourMode ? 'white' : '';
+            showNotification(`Rush Hour Mode ${rushHourMode ? 'ON' : 'OFF'}`, 'info');
+            applyFilters();
+            saveUserPreferences();
+        }
+
+        // Enhanced refresh function
+        function refreshAlerts() {
+            saveUserPreferences();
+            
+            const refreshBtn = document.querySelector('.btn-primary');
+            const originalText = refreshBtn.innerHTML;
+            refreshBtn.innerHTML = '⟳ Refreshing...';
+            refreshBtn.disabled = true;
+            refreshBtn.style.opacity = '0.7';
+            
+            playSound('refresh');
+            loadAlerts();
+            
+            setTimeout(() => {
+                refreshBtn.innerHTML = originalText;
+                refreshBtn.disabled = false;
+                refreshBtn.style.opacity = '1';
+            }, 1600);
+        }
+
+        // Load alerts with enhanced features
         function loadAlerts() {
             showLoading();
             
-            // Simulate API delay
             setTimeout(() => {
                 currentAlerts = [...simulatedAlerts];
                 applyFilters();
                 updateStats();
+                checkForCriticalAlerts();
+                showNotification('Alerts refreshed successfully!', 'success');
             }, 1500);
         }
 
-        function showLoading() {
-            document.getElementById('alertsContainer').innerHTML = `
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <p>Loading subway alerts...</p>
-                </div>
-            `;
+        function checkForCriticalAlerts() {
+            const criticalAlerts = currentAlerts.filter(alert => alert.severity === 'critical');
+            if (criticalAlerts.length > 0 && soundEnabled) {
+                criticalAlerts.forEach(() => playSound('critical'));
+            }
+            
+            // Browser notification for critical alerts
+            if ('Notification' in window && Notification.permission === 'granted') {
+                criticalAlerts.forEach(alert => {
+                    new Notification(`Critical Alert: ${alert.title}`, {
+                        body: alert.description.substring(0, 100) + '...',
+                        icon: '/favicon.ico'
+                    });
+                });
+            }
         }
 
+        function requestNotificationPermission() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        }
+
+        // Enhanced filtering
         function applyFilters() {
             const lineFilter = document.getElementById('lineFilter').value;
             const severityFilter = document.getElementById('severityFilter').value;
+            const timeFilter = document.getElementById('timeFilter').value;
+            const locationFilter = document.getElementById('locationFilter').value;
 
             filteredAlerts = currentAlerts.filter(alert => {
-                const lineMatch = lineFilter === 'all' || 
-                    alert.lines.some(line => {
+                // Line filter
+                let lineMatch = lineFilter === 'all';
+                if (lineFilter === 'favorites') {
+                    lineMatch = alert.lines.some(line => favoriteLines.has(line));
+                } else if (lineFilter !== 'all') {
+                    lineMatch = alert.lines.some(line => {
                         if (lineFilter === '123') return ['1', '2', '3'].includes(line);
                         if (lineFilter === '456') return ['4', '5', '6'].includes(line);
                         if (lineFilter === '7') return line === '7';
@@ -723,25 +1188,52 @@
                         if (lineFilter === 'S') return line === 'S';
                         return false;
                     });
+                }
                 
+                // Severity filter
                 const severityMatch = severityFilter === 'all' || alert.severity === severityFilter;
                 
-                return lineMatch && severityMatch;
+                // Time filter
+                let timeMatch = true;
+                if (timeFilter === 'active') {
+                    timeMatch = !alert.estimatedResolution || alert.estimatedResolution > new Date();
+                } else if (timeFilter === 'rush') {
+                    timeMatch = alert.isRushHour;
+                } else if (timeFilter === 'planned') {
+                    timeMatch = alert.severity === 'info';
+                }
+                
+                // Location filter
+                let locationMatch = true;
+                if (locationFilter === 'nearme' && userLocation) {
+                    // Simplified distance check - in real app would use proper geolocation
+                    locationMatch = parseFloat(alert.walkingDistance) < 1.0;
+                } else if (locationFilter !== 'all' && locationFilter !== 'nearme') {
+                    locationMatch = alert.location === locationFilter;
+                }
+                
+                // Rush hour mode override
+                if (rushHourMode) {
+                    timeMatch = timeMatch && alert.isRushHour;
+                }
+                
+                return lineMatch && severityMatch && timeMatch && locationMatch;
             });
 
             renderAlerts();
             updateStats();
         }
 
+        // Enhanced alert rendering
         function renderAlerts() {
             const container = document.getElementById('alertsContainer');
             
             if (filteredAlerts.length === 0) {
                 container.innerHTML = `
                     <div class="alert-card">
-                        <div class="no-alerts">
-                            <h3>✅ Good Service!</h3>
-                            <p>No service alerts match your current filters.</p>
+                        <div class="alert-content" style="text-align: center; padding: 48px;">
+                            <h3 style="color: var(--good-service); margin-bottom: 16px; font-size: 1.5rem;">✅ No Alerts Found</h3>
+                            <p style="color: var(--text-muted);">No service alerts match your current filters. Try adjusting your criteria or check back later.</p>
                         </div>
                     </div>
                 `;
@@ -751,23 +1243,40 @@
             container.innerHTML = filteredAlerts.map(alert => `
                 <div class="alert-card ${alert.severity}">
                     <div class="alert-header">
-                        <div class="alert-lines">
-                            ${alert.lines.map(line => `
-                                <span class="line-badge" style="background-color: ${lineColors[line] || '#666'}">
-                                    ${line}
-                                </span>
-                            `).join('')}
+                        <div class="alert-meta">
+                            <div class="alert-lines">
+                                ${alert.lines.map(line => `
+                                    <span class="line-badge" style="background-color: ${lineColors[line] || '#666'}" onclick="toggleFavoriteLine('${line}')">
+                                        ${line}
+                                        ${favoriteLines.has(line) ? '<span class="favorite-star">⭐</span>' : ''}
+                                    </span>
+                                `).join('')}
+                            </div>
+                            <span class="severity-badge ${alert.severity}">
+                                ${alert.severity}
+                            </span>
+                            ${alert.isRushHour ? '<span class="rush-hour-badge">Rush Hour</span>' : ''}
                         </div>
-                        <span class="severity-badge ${alert.severity}">
-                            ${alert.severity}
-                        </span>
+                        <div class="alert-actions">
+                            <button class="action-btn" onclick="shareSpecificAlert('${alert.id}')">📱 Share</button>
+                            <button class="action-btn" onclick="getDirections('${alert.affectedStations[0]}')">🗺️ Directions</button>
+                        </div>
                     </div>
                     <div class="alert-content">
                         <h3 class="alert-title">${alert.title}</h3>
                         <p class="alert-description">${alert.description}</p>
+                        <div class="alert-details">
+                            <div><strong>Affected Stations:</strong> ${alert.affectedStations.join(', ')}</div>
+                            <div><strong>Service Reliability:</strong> ${alert.serviceReliability}%</div>
+                            ${alert.estimatedResolution ? `<div><strong>Est. Resolution:</strong> ${formatTime(alert.estimatedResolution)}</div>` : ''}
+                            <div class="location-info">📍 ${alert.walkingDistance} away</div>
+                        </div>
                         <div class="alert-footer">
                             <span class="timestamp">
                                 📅 Updated: ${formatTimestamp(alert.timestamp)}
+                            </span>
+                            <span style="color: var(--accent-blue); font-weight: 600;">
+                                📍 ${alert.location.charAt(0).toUpperCase() + alert.location.slice(1)}
                             </span>
                         </div>
                     </div>
@@ -775,14 +1284,15 @@
             `).join('');
         }
 
+        // Enhanced statistics
         function updateStats() {
             const stats = {
                 critical: currentAlerts.filter(a => a.severity === 'critical').length,
                 warning: currentAlerts.filter(a => a.severity === 'warning').length,
-                info: currentAlerts.filter(a => a.severity === 'info').length
+                info: currentAlerts.filter(a => a.severity === 'info').length,
+                rushHour: currentAlerts.filter(a => a.isRushHour).length
             };
 
-            // Calculate good service lines (lines with no critical alerts)
             const linesWithIssues = new Set();
             currentAlerts.forEach(alert => {
                 if (alert.severity === 'critical') {
@@ -797,6 +1307,153 @@
             document.getElementById('warningCount').textContent = stats.warning;
             document.getElementById('infoCount').textContent = stats.info;
             document.getElementById('goodServiceCount').textContent = goodServiceLines;
+            document.getElementById('rushHourCount').textContent = stats.rushHour;
+        }
+
+        // Export functionality
+        function exportAlerts(format) {
+            const data = filteredAlerts.map(alert => ({
+                title: alert.title,
+                description: alert.description,
+                lines: alert.lines.join(', '),
+                severity: alert.severity,
+                timestamp: alert.timestamp.toISOString(),
+                affectedStations: alert.affectedStations.join(', '),
+                isRushHour: alert.isRushHour,
+                location: alert.location,
+                serviceReliability: alert.serviceReliability
+            }));
+
+            if (format === 'json') {
+                downloadFile(JSON.stringify(data, null, 2), 'subway-alerts.json', 'application/json');
+            } else if (format === 'csv') {
+                const csv = convertToCSV(data);
+                downloadFile(csv, 'subway-alerts.csv', 'text/csv');
+            }
+            
+            showNotification(`Exported ${data.length} alerts as ${format.toUpperCase()}`, 'success');
+        }
+
+        function convertToCSV(data) {
+            if (data.length === 0) return '';
+            
+            const headers = Object.keys(data[0]);
+            const csvContent = [
+                headers.join(','),
+                ...data.map(row => headers.map(header => `"${row[header]}"`).join(','))
+            ].join('\n');
+            
+            return csvContent;
+        }
+
+        function downloadFile(content, filename, contentType) {
+            const blob = new Blob([content], { type: contentType });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        function printAlerts() {
+            window.print();
+        }
+
+        // Share functionality
+        function shareAlert() {
+            const summary = `NYC Subway Alert Summary (${new Date().toLocaleDateString()})\n\n` +
+                `Critical Alerts: ${document.getElementById('criticalCount').textContent}\n` +
+                `Warnings: ${document.getElementById('warningCount').textContent}\n` +
+                `Info: ${document.getElementById('infoCount').textContent}\n\n` +
+                `View full details at: ${window.location.href}`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'NYC Subway Alerts',
+                    text: summary,
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(summary).then(() => {
+                    showNotification('Alert summary copied to clipboard!', 'success');
+                });
+            }
+        }
+
+        function shareSpecificAlert(alertId) {
+            const alert = currentAlerts.find(a => a.id === alertId);
+            if (!alert) return;
+
+            const alertText = `🚇 ${alert.title}\n\n${alert.description}\n\nLines: ${alert.lines.join(', ')}\nSeverity: ${alert.severity.toUpperCase()}`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: alert.title,
+                    text: alertText
+                });
+            } else {
+                navigator.clipboard.writeText(alertText).then(() => {
+                    showNotification('Alert copied to clipboard!', 'success');
+                });
+            }
+        }
+
+        function getDirections(station) {
+            const query = encodeURIComponent(`${station} subway station NYC`);
+            window.open(`https://www.google.com/maps/search/${query}`, '_blank');
+        }
+
+        // Utility functions
+        function clearPreferences() {
+            localStorage.removeItem('subwayAlertsPreferences');
+            favoriteLines.clear();
+            soundEnabled = false;
+            rushHourMode = false;
+            currentTheme = 'light';
+            currentFontSize = 'normal';
+            
+            document.getElementById('lineFilter').value = 'all';
+            document.getElementById('severityFilter').value = 'all';
+            document.getElementById('timeFilter').value = 'all';
+            document.getElementById('locationFilter').value = 'all';
+            
+            applyTheme('light');
+            applySoundSettings();
+            applyFontSize('normal');
+            updateFavoriteLines();
+            applyFilters();
+            
+            showNotification('All preferences cleared!', 'info');
+        }
+
+        function showLoading() {
+            document.getElementById('alertsContainer').innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading subway alerts...</p>
+                </div>
+            `;
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
         }
 
         function formatTimestamp(timestamp) {
@@ -813,9 +1470,17 @@
             return timestamp.toLocaleDateString();
         }
 
-        // Auto-refresh every 2 minutes
+        function formatTime(date) {
+            return date.toLocaleTimeString('en-US', { 
+                hour: 'numeric', 
+                minute: '2-digit',
+                hour12: true 
+            });
+        }
+
+        // Auto-refresh with preferences
         setInterval(() => {
-            loadAlerts();
+            refreshAlerts();
         }, 120000);
     </script>
 </body>
