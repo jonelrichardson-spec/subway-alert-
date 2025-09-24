@@ -10,7 +10,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title data-i18n="appTitle">Task Manager</title>
+    <title>Task Manager</title>
 
     <!-- External libraries (CDN) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -25,19 +25,8 @@
   <body>
     <header class="app-header">
       <div class="container">
-        <div class="header-content">
-          <div class="header-text">
-            <h1 class="app-title" data-i18n="appTitle">Task Manager</h1>
-            <p class="app-subtitle" data-i18n="appSubtitle">Quickly add, edit, and manage tasks</p>
-          </div>
-          <div class="language-selector">
-            <select id="language-select" aria-label="Select Language" data-i18n="selectLanguage">
-              <option value="en">English</option>
-              <option value="es">Español</option>
-              <option value="fr">Français</option>
-            </select>
-          </div>
-        </div>
+        <h1 class="app-title">Task Manager</h1>
+        <p class="app-subtitle">Quickly add, edit, and manage tasks</p>
       </div>
     </header>
 
@@ -45,8 +34,8 @@
       <!-- Add task form -->
       <section class="component task-input" aria-label="Add task">
         <form id="task-form" class="task-form" novalidate>
-          <input id="task-input" name="task" type="text" placeholder="Enter a new task..." required />
-          <button id="add-task-btn" type="submit" data-i18n="addTask">Add Task</button>
+          <input id="task-input" name="task" type="text" placeholder="What needs to be done?" required />
+          <button id="add-task-btn" type="submit">Add Task</button>
         </form>
       </section>
 
@@ -57,14 +46,14 @@
 
       <!-- Controls -->
       <section class="component controls" aria-label="Controls">
-        <button id="clear-completed" class="btn" data-i18n="clearCompleted">Clear completed</button>
-        <button id="toggle-all" class="btn" data-i18n="toggleAll">Toggle all</button>
+        <button id="clear-completed" class="btn">Clear completed</button>
+        <button id="toggle-all" class="btn">Toggle all</button>
         <span id="task-count" class="task-count">0 tasks</span>
       </section>
     </main>
 
     <footer class="app-footer">
-      <div class="container" data-i18n="footerText">Built with ES modules • No frameworks</div>
+      <div class="container">Built with ES modules • No frameworks</div>
     </footer>
   </body>
 </html>
