@@ -19,9 +19,29 @@ body{font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);col
 .container{max-width:900px;margin:28px auto;padding:0 16px}
 
 /* Header */
-.app-header{padding:20px 0;text-align:center}
+.app-header{padding:20px 0}
+.header-content{display:flex;justify-content:space-between;align-items:center}
+.header-text{text-align:center;flex:1}
 .app-title{font-size:1.6rem;margin-bottom:6px}
 .app-subtitle{color:var(--muted);font-size:0.95rem}
+
+/* Language selector */
+.language-selector{position:relative}
+.language-selector select{
+  padding:8px 12px;
+  border:1px solid #e6eef8;
+  border-radius:8px;
+  background:var(--card);
+  color:var(--text);
+  font-size:0.9rem;
+  cursor:pointer;
+  appearance:none;
+  padding-right:32px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 8px center
+}
+.language-selector select:hover{border-color:var(--accent)}
 
 /* Components */
 .component{background:var(--card);padding:14px;border-radius:var(--radius);box-shadow:0 6px 18px rgba(15,23,42,0.06);margin-bottom:16px}
