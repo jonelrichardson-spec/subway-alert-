@@ -1,0 +1,51 @@
+/*
+  File: styles.css
+  Purpose: All styling for the Task Manager app organized by component
+  - No inline styles in HTML
+  - Variables for theme and spacing
+*/
+:root{
+  --bg: #f7fafc;
+  --card: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --accent: #2563eb;
+  --radius: 10px;
+  --gap: 12px;
+}
+
+*{box-sizing:border-box}
+body{font-family:Inter,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);margin:0;line-height:1.4}
+.container{max-width:900px;margin:28px auto;padding:0 16px}
+
+/* Header */
+.app-header{padding:20px 0;text-align:center}
+.app-title{font-size:1.6rem;margin-bottom:6px}
+.app-subtitle{color:var(--muted);font-size:0.95rem}
+
+/* Components */
+.component{background:var(--card);padding:14px;border-radius:var(--radius);box-shadow:0 6px 18px rgba(15,23,42,0.06);margin-bottom:16px}
+
+/* Task input form */
+.task-form{display:flex;gap:8px}
+.task-form input[type='text']{flex:1;padding:10px 12px;border:1px solid #e6eef8;border-radius:8px;font-size:1rem}
+.task-form button{padding:10px 14px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer}
+.task-form button:active{transform:translateY(1px)}
+
+/* Task list */
+.tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.task-item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:8px;border:1px solid #eef3fb}
+.task-item .content{flex:1}
+.task-item .meta{display:flex;gap:8px;align-items:center}
+.task-item.completed{opacity:0.6;text-decoration:line-through}
+
+.task-actions{display:flex;gap:8px}
+.task-actions button{background:none;border:1px solid #e6eef8;padding:6px 8px;border-radius:6px;cursor:pointer}
+
+/* Controls */
+.controls{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.btn{padding:8px 12px;border-radius:8px;background:#f1f5f9;border:1px solid #e2e8f0;cursor:pointer}
+.task-count{color:var(--muted)}
+
+/* Responsive */
+@media (max-width:600px){.task-form{flex-direction:column}.controls{flex-direction:column;align-items:flex-start}}
