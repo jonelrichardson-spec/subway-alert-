@@ -1,508 +1,4 @@
-/*
- * NYC Subway Alerts Pro - JavaScript Module
- * Modern ES6+ JavaScript with modular functions and data management
- */
-
-// ========== CONSTANTS & CONFIGURATION ==========
-const SUBWAY_LINE_COLORS = {
-    '1': '#EE352E', '2': '#EE352E', '3': '#EE352E',
-    '4': '#00933C', '5': '#00933C', '6': '#00933C',
-    '7': '#B933AD',
-    'A': '#0039A6', 'C': '#0039A6', 'E': '#0039A6',
-    'B': '#FF6319', 'D': '#FF6319', 'F': '#FF6319', 'M': '#FF6319',
-    'G': '#6CBE45',
-    'J': '#996633', 'Z': '#996633',
-    'L': '#A7A9AC',
-    'N': '#FCCC0A', 'Q': '#FCCC0A', 'R': '#FCCC0A', 'W': '#FCCC0A',
-    'S': '#808183'
-};
-
-const REFRESH_INTERVAL = 120000; // 2 minutes
-const STORAGE_KEY = 'subwayAlertsPreferences';
-
-// ========== GLOBAL STATE ==========
-const AppState = {
-    currentAlerts: [],
-    filteredAlerts: [],
-    userPreferences: {
-        soundEnabled: false,
-        rushHourMode: false,
-        currentTheme: 'light',
-        currentFontSize: 'normal',
-        currentLanguage: 'en',
-        userLocation: null
-    }
-};
-
-// ========== SIMULATED ALERT DATA ==========
-const SIMULATED_ALERTS = [
-    {
-        id: '1',
-        title: 'Service Disruption on 4, 5, 6 Lines',
-        description: 'Due to signal problems at Union Square, expect delays in both directions. Trains are operating with increased travel time of 15-20 minutes.',
-        lines: ['4', '5', '6'],
-        severity: 'critical',
-        timestamp: new Date(Date.now() - 1800000),
-        affectedStations: ['Union Sq', '14 St', 'Astor Pl'],
-        estimatedResolution: new Date(Date.now() + 3600000),
-        isRushHour: true,
-        location: 'manhattan',
-        serviceReliability: 65,
-        walkingDistance: '0.3 miles'
-    },
-    {
-        id: '2',
-        title: 'Weekend Service Changes',
-        description: 'L train is not running between 14 St-Union Sq and 8 Av due to planned maintenance work. Free shuttle bus service is available.',
-        lines: ['L'],
-        severity: 'warning',
-        timestamp: new Date(Date.now() - 3600000),
-        affectedStations: ['14 St-Union Sq', '8 Av', '6 Av'],
-        estimatedResolution: new Date(Date.now() + 14400000),
-        isRushHour: false,
-        location: 'manhattan',
-        serviceReliability: 45,
-        walkingDistance: '0.5 miles'
-    },
-    {
-        id: '3',
-        title: 'Express Service Running Local',
-        description: 'N and Q trains are running local in Manhattan due to track work. Allow extra travel time.',
-        lines: ['N', 'Q'],
-        severity: 'warning',
-        timestamp: new Date(Date.now() - 900000),
-        affectedStations: ['Times Sq', 'Herald Sq', 'Union Sq'],
-        estimatedResolution: new Date(Date.now() + 7200000),
-        isRushHour: true,
-        location: 'manhattan',
-        serviceReliability: 75,
-        walkingDistance: '0.2 miles'
-    },
-    {
-        id: '4',
-        title: 'Station Accessibility Update',
-        description: 'Elevator at 59 St-Columbus Circle is back in service. All station levels are now accessible.',
-        lines: ['A', 'B', 'C', 'D'],
-        severity: 'info',
-        timestamp: new Date(Date.now() - 600000),
-        affectedStations: ['59 St-Columbus Circle'],
-        estimatedResolution: null,
-        isRushHour: false,
-        location: 'manhattan',
-        serviceReliability: 95,
-        walkingDistance: '0.8 miles'
-    },
-    {
-        id: '5',
-        title: 'Rush Hour Express Service',
-        description: 'Additional 6 express trains are running during evening rush hours to reduce crowding.',
-        lines: ['6'],
-        severity: 'info',
-        timestamp: new Date(Date.now() - 1200000),
-        affectedStations: ['Multiple stations'],
-        estimatedResolution: new Date(Date.now() + 1800000),
-        isRushHour: true,
-        location: 'manhattan',
-        serviceReliability: 85,
-        walkingDistance: '0.1 miles'
-    },
-    {
-        id: '6',
-        title: 'Brooklyn Service Alert',
-        description: 'F train experiencing minor delays due to train traffic ahead. Expect 5-10 minute delays.',
-        lines: ['F'],
-        severity: 'warning',
-        timestamp: new Date(Date.now() - 2700000),
-        affectedStations: ['Jay St', 'Borough Hall', 'Court St'],
-        estimatedResolution: new Date(Date.now() + 1800000),
-        isRushHour: false,
-        location: 'brooklyn',
-        serviceReliability: 80,
-        walkingDistance: '1.2 miles'
-    }
-];
-
-// ========== TRANSLATION SYSTEM ==========
-const TRANSLATIONS = {
-    en: {
-        title: "NYC Subway Alerts Pro",
-        subtitle: "Real-time service alerts with smart features and accessibility",
-        alertSounds: "Alert Sounds",
-        filterByLine: "Filter by Line:",
-        allLines: "All Lines",
-        filterBySeverity: "Filter by Severity:",
-        allSeverities: "All Severities",
-        criticalOnly: "Critical Only",
-        warnings: "Warnings",
-        info: "Info",
-        timeFilter: "Time Filter:",
-        allTimes: "All Times",
-        activeNow: "Active Now",
-        rushHour: "Rush Hour Impact",
-        plannedWork: "Planned Work",
-        location: "Location:",
-        allAreas: "All Areas",
-        nearMe: "📍 Near Me",
-        manhattan: "Manhattan",
-        brooklyn: "Brooklyn",
-        queens: "Queens",
-        bronx: "Bronx",
-        refresh: "🔄 Refresh",
-        rushMode: "⏰ Rush Mode",
-        reset: "🗑️ Reset",
-        criticalAlerts: "Critical Alerts",
-        serviceInfo: "Service Info",
-        goodService: "Good Service",
-        rushHourAlerts: "Rush Hour Alerts",
-        exportShare: "📤 Export & Share",
-        exportJSON: "📄 Export JSON",
-        exportCSV: "📊 Export CSV",
-        printView: "🖨️ Print View",
-        shareSummary: "📱 Share Summary",
-        loadingAlerts: "Loading subway alerts...",
-        noAlertsFound: "✅ No Alerts Found",
-        noAlertsMessage: "No service alerts match your current filters. Try adjusting your criteria or check back later.",
-        share: "📱 Share",
-        directions: "🗺️ Directions",
-        affectedStations: "Affected Stations:",
-        serviceStatus: "Service Status:",
-        estimatedResolution: "Est. Resolution:",
-        away: "away",
-        updated: "📅 Updated:",
-        refreshing: "⏳ Refreshing...",
-        alertsRefreshed: "Alerts refreshed successfully!",
-        settingsRestored: "Settings restored from",
-        minutesAgo: "minutes ago",
-        soundsEnabled: "Sounds enabled",
-        soundsDisabled: "Sounds disabled",
-        gettingLocation: "Getting your location...",
-        locationFound: "Location found! Filtering nearby alerts.",
-        locationError: "Could not get location. Please enable location services.",
-        locationNotSupported: "Location not supported by your browser.",
-        rushHourModeOn: "Rush Hour Mode ON",
-        rushHourModeOff: "Rush Hour Mode OFF",
-        exported: "Exported",
-        alertsAs: "alerts as",
-        alertCopied: "Alert copied to clipboard!",
-        summaryCopied: "Alert summary copied to clipboard!",
-        preferencesCleared: "All preferences cleared!",
-        justNow: "Just now",
-        minAgo: "min ago",
-        hoursAgo: "hours ago",
-        critical: "critical",
-        warning: "warning",
-        serviceReliability: {
-            excellent: "🟢 Excellent",
-            good: "🟡 Good", 
-            fair: "🟠 Fair",
-            poor: "🔴 Poor",
-            veryPoor: "⛔ Very Poor"
-        },
-        fontSizes: {
-            normal: "Normal Text",
-            large: "Large Text",
-            small: "Small Text"
-        },
-        themeToggle: {
-            dark: "🌙 Dark",
-            light: "☀️ Light"
-        }
-    },
-    es: {
-        title: "Alertas del Metro de NYC Pro",
-        subtitle: "Alertas de servicio en tiempo real con funciones inteligentes y accesibilidad",
-        alertSounds: "Sonidos de Alerta",
-        filterByLine: "Filtrar por Línea:",
-        allLines: "Todas las Líneas",
-        filterBySeverity: "Filtrar por Severidad:",
-        allSeverities: "Todas las Severidades",
-        criticalOnly: "Solo Críticas",
-        warnings: "Advertencias",
-        info: "Información",
-        timeFilter: "Filtro de Tiempo:",
-        allTimes: "Todos los Tiempos",
-        activeNow: "Activo Ahora",
-        rushHour: "Impacto de Hora Pico",
-        plannedWork: "Trabajo Planificado",
-        location: "Ubicación:",
-        allAreas: "Todas las Áreas",
-        nearMe: "📍 Cerca de Mí",
-        manhattan: "Manhattan",
-        brooklyn: "Brooklyn",
-        queens: "Queens",
-        bronx: "Bronx",
-        refresh: "🔄 Actualizar",
-        rushMode: "⏰ Modo Hora Pico",
-        reset: "🗑️ Restablecer",
-        criticalAlerts: "Alertas Críticas",
-        serviceInfo: "Info del Servicio",
-        goodService: "Buen Servicio",
-        rushHourAlerts: "Alertas de Hora Pico",
-        exportShare: "📤 Exportar y Compartir",
-        exportJSON: "📄 Exportar JSON",
-        exportCSV: "📊 Exportar CSV",
-        printView: "🖨️ Vista de Impresión",
-        shareSummary: "📱 Compartir Resumen",
-        loadingAlerts: "Cargando alertas del metro...",
-        noAlertsFound: "✅ No se Encontraron Alertas",
-        noAlertsMessage: "Ninguna alerta de servicio coincide con sus filtros actuales. Intente ajustar sus criterios o vuelva más tarde.",
-        share: "📱 Compartir",
-        directions: "🗺️ Direcciones",
-        affectedStations: "Estaciones Afectadas:",
-        serviceStatus: "Estado del Servicio:",
-        estimatedResolution: "Resolución Estimada:",
-        away: "de distancia",
-        updated: "📅 Actualizado:",
-        refreshing: "⏳ Actualizando...",
-        alertsRefreshed: "¡Alertas actualizadas con éxito!",
-        settingsRestored: "Configuración restaurada desde hace",
-        minutesAgo: "minutos",
-        soundsEnabled: "Sonidos habilitados",
-        soundsDisabled: "Sonidos deshabilitados",
-        gettingLocation: "Obteniendo su ubicación...",
-        locationFound: "¡Ubicación encontrada! Filtrando alertas cercanas.",
-        locationError: "No se pudo obtener la ubicación. Habilite los servicios de ubicación.",
-        locationNotSupported: "Ubicación no compatible con su navegador.",
-        rushHourModeOn: "Modo Hora Pico ACTIVADO",
-        rushHourModeOff: "Modo Hora Pico DESACTIVADO",
-        exported: "Exportadas",
-        alertsAs: "alertas como",
-        alertCopied: "¡Alerta copiada al portapapeles!",
-        summaryCopied: "¡Resumen de alerta copiado al portapapeles!",
-        preferencesCleared: "¡Todas las preferencias eliminadas!",
-        justNow: "Ahora mismo",
-        minAgo: "min atrás",
-        hoursAgo: "horas atrás",
-        critical: "crítico",
-        warning: "advertencia",
-        serviceReliability: {
-            excellent: "🟢 Excelente",
-            good: "🟡 Bueno",
-            fair: "🟠 Regular", 
-            poor: "🔴 Malo",
-            veryPoor: "⛔ Muy Malo"
-        },
-        fontSizes: {
-            normal: "Texto Normal",
-            large: "Texto Grande",
-            small: "Texto Pequeño"
-        },
-        themeToggle: {
-            dark: "🌙 Oscuro",
-            light: "☀️ Claro"
-        }
-    }
-    // Additional languages can be added here (fr, ja)
-};
-
-// ========== UTILITY FUNCTIONS ==========
-const Utils = {
-    /**
-     * Translation helper function
-     * @param {string} key - Translation key (supports dot notation)
-     * @returns {string} Translated text
-     */
-    translate(key) {
-        const keys = key.split('.');
-        let value = TRANSLATIONS[AppState.userPreferences.currentLanguage];
-        
-        for (const k of keys) {
-            value = value?.[k];
-            if (value === undefined) {
-                return TRANSLATIONS.en[key] || key;
-            }
-        }
-        return value;
-    },
-
-    /**
-     * Format timestamp relative to current time
-     * @param {Date} timestamp - The timestamp to format
-     * @returns {string} Formatted time string
-     */
-    formatTimestamp(timestamp) {
-        const now = new Date();
-        const diff = now - timestamp;
-        const minutes = Math.floor(diff / 60000);
-        
-        if (minutes < 1) return this.translate('justNow');
-        if (minutes < 60) return `${minutes} ${this.translate('minAgo')}`;
-        
-        const hours = Math.floor(minutes / 60);
-        if (hours < 24) return `${hours} ${this.translate('hoursAgo')}`;
-        
-        return timestamp.toLocaleDateString();
-    },
-
-    /**
-     * Format time in 12-hour format
-     * @param {Date} date - Date object to format
-     * @returns {string} Formatted time string
-     */
-    formatTime(date) {
-        return date.toLocaleTimeString('en-US', { 
-            hour: 'numeric', 
-            minute: '2-digit',
-            hour12: true 
-        });
-    },
-
-    /**
-     * Get service reliability indicator
-     * @param {number} percentage - Reliability percentage
-     * @returns {string} Reliability indicator with emoji
-     */
-    getServiceReliabilityIndicator(percentage) {
-        if (percentage >= 90) return this.translate('serviceReliability.excellent');
-        if (percentage >= 75) return this.translate('serviceReliability.good');
-        if (percentage >= 60) return this.translate('serviceReliability.fair');
-        if (percentage >= 40) return this.translate('serviceReliability.poor');
-        return this.translate('serviceReliability.veryPoor');
-    },
-
-    /**
-     * Convert data to CSV format
-     * @param {Array} data - Array of objects to convert
-     * @returns {string} CSV formatted string
-     */
-    convertToCSV(data) {
-        if (data.length === 0) return '';
-        
-        const headers = Object.keys(data[0]);
-        const csvContent = [
-            headers.join(','),
-            ...data.map(row => headers.map(header => `"${row[header]}"`).join(','))
-        ].join('\n');
-        
-        return csvContent;
-    },
-
-    /**
-     * Download file to user's device
-     * @param {string} content - File content
-     * @param {string} filename - Name of file
-     * @param {string} contentType - MIME type
-     */
-    downloadFile(content, filename, contentType) {
-        const blob = new Blob([content], { type: contentType });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-    }
-};
-
-// ========== NOTIFICATION SYSTEM ==========
-const NotificationManager = {
-    /**
-     * Show notification to user
-     * @param {string} message - Notification message
-     * @param {string} type - Notification type (info, success, warning, error)
-     */
-    show(message, type = 'info') {
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.textContent = message;
-        document.body.appendChild(notification);
-        
-        // Animate in
-        setTimeout(() => {
-            notification.style.opacity = '1';
-            notification.style.transform = 'translateX(0)';
-        }, 100);
-        
-        // Animate out and remove
-        setTimeout(() => {
-            notification.style.opacity = '0';
-            notification.style.transform = 'translateX(100%)';
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
-    }
-};
-
-// ========== SOUND SYSTEM ==========
-const SoundManager = {
-    /**
-     * Play notification sound
-     * @param {string} type - Sound type (critical, warning, info, refresh)
-     */
-    play(type) {
-        if (!AppState.userPreferences.soundEnabled) return;
-        
-        try {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillator = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
-            
-            oscillator.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-            
-            const frequencies = {
-                'critical': 800,
-                'warning': 600,
-                'info': 400,
-                'refresh': 700
-            };
-            
-            oscillator.frequency.setValueAtTime(frequencies[type] || 500, audioContext.currentTime);
-            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
-            
-            oscillator.start();
-            oscillator.stop(audioContext.currentTime + 0.2);
-        } catch (error) {
-            console.log('Sound playback failed:', error);
-        }
-    }
-};
-
-// ========== STORAGE MANAGER ==========
-const StorageManager = {
-    /**
-     * Save user preferences to localStorage
-     */
-    savePreferences() {
-        const preferences = {
-            lineFilter: document.getElementById('lineFilter').value,
-            severityFilter: document.getElementById('severityFilter').value,
-            timeFilter: document.getElementById('timeFilter').value,
-            locationFilter: document.getElementById('locationFilter').value,
-            soundEnabled: AppState.userPreferences.soundEnabled,
-            theme: AppState.userPreferences.currentTheme,
-            fontSize: AppState.userPreferences.currentFontSize,
-            rushHourMode: AppState.userPreferences.rushHourMode,
-            language: AppState.userPreferences.currentLanguage,
-            lastUpdated: new Date().toISOString()
-        };
-        
-        try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
-        } catch (error) {
-            console.log('Could not save preferences:', error);
-        }
-    },
-
-    /**
-     * Load user preferences from localStorage
-     */
-    loadPreferences() {
-        try {
-            const saved = localStorage.getItem(STORAGE_KEY);
-            if (!saved) return;
-
-            const preferences = JSON.parse(saved);
-            
-            // Update form elements
-            document.getElementById('lineFilter').value = preferences.lineFilter || 'all';
-            document.getElementById('severityFilter').value = preferences.severityFilter || 'all';
-            document.getElementById('timeFilter').value = preferences.timeFilter || 'all';
-            document.getElementById('locationFilter').value = preferences.locationFilter || 'all';
-            
-            // Update app state
+// Update app state
             AppState.userPreferences.soundEnabled = preferences.soundEnabled || false;
             AppState.userPreferences.currentTheme = preferences.theme || 'light';
             AppState.userPreferences.currentFontSize = preferences.fontSize || 'normal';
@@ -829,7 +325,7 @@ const UIManager = {
         quickActionButtons[0].innerHTML = Utils.translate('refresh');
         quickActionButtons[1].innerHTML = Utils.translate('rushMode');
         quickActionButtons[2].innerHTML = Utils.translate('reset');
-        quickActionButtons[3].innerHTML = `📍 ${Utils.translate('nearMe').replace('📍 ', '')}`;
+        quickActionButtons[3].innerHTML = `🔍 ${Utils.translate('nearMe').replace('🔍 ', '')}`;
         
         // Stats labels
         const statLabels = document.querySelectorAll('.stat-label');
@@ -947,14 +443,14 @@ const UIManager = {
                         <div><strong>${Utils.translate('affectedStations')}</strong> ${alert.affectedStations.join(', ')}</div>
                         <div><strong>${Utils.translate('serviceStatus')}</strong> ${Utils.getServiceReliabilityIndicator(alert.serviceReliability)}</div>
                         ${alert.estimatedResolution ? `<div><strong>${Utils.translate('estimatedResolution')}</strong> ${Utils.formatTime(alert.estimatedResolution)}</div>` : ''}
-                        <div class="location-info">📍 ${alert.walkingDistance} ${Utils.translate('away')}</div>
+                        <div class="location-info">🔍 ${alert.walkingDistance} ${Utils.translate('away')}</div>
                     </div>
                     <div class="alert-footer">
                         <span class="timestamp">
                             ${Utils.translate('updated')} ${Utils.formatTimestamp(alert.timestamp)}
                         </span>
                         <span style="color: var(--accent-blue); font-weight: 600;">
-                            📍 ${Utils.translate(alert.location)}
+                            🔍 ${Utils.translate(alert.location)}
                         </span>
                     </div>
                 </div>
@@ -1386,4 +882,673 @@ document.addEventListener('DOMContentLoaded', () => {
             FilterManager.apply();
         }, 500);
     });
-});
+});/*
+ * NYC Subway Alerts Pro - JavaScript Module
+ * Modern ES6+ JavaScript with modular functions and data management
+ */
+
+// ========== CONSTANTS & CONFIGURATION ==========
+const SUBWAY_LINE_COLORS = {
+    '1': '#EE352E', '2': '#EE352E', '3': '#EE352E',
+    '4': '#00933C', '5': '#00933C', '6': '#00933C',
+    '7': '#B933AD',
+    'A': '#0039A6', 'C': '#0039A6', 'E': '#0039A6',
+    'B': '#FF6319', 'D': '#FF6319', 'F': '#FF6319', 'M': '#FF6319',
+    'G': '#6CBE45',
+    'J': '#996633', 'Z': '#996633',
+    'L': '#A7A9AC',
+    'N': '#FCCC0A', 'Q': '#FCCC0A', 'R': '#FCCC0A', 'W': '#FCCC0A',
+    'S': '#808183'
+};
+
+const REFRESH_INTERVAL = 120000; // 2 minutes
+const STORAGE_KEY = 'subwayAlertsPreferences';
+
+// ========== GLOBAL STATE ==========
+const AppState = {
+    currentAlerts: [],
+    filteredAlerts: [],
+    userPreferences: {
+        soundEnabled: false,
+        rushHourMode: false,
+        currentTheme: 'light',
+        currentFontSize: 'normal',
+        currentLanguage: 'en',
+        userLocation: null
+    }
+};
+
+// ========== SIMULATED ALERT DATA ==========
+const SIMULATED_ALERTS = [
+    {
+        id: '1',
+        title: 'Service Disruption on 4, 5, 6 Lines',
+        description: 'Due to signal problems at Union Square, expect delays in both directions. Trains are operating with increased travel time of 15-20 minutes.',
+        lines: ['4', '5', '6'],
+        severity: 'critical',
+        timestamp: new Date(Date.now() - 1800000),
+        affectedStations: ['Union Sq', '14 St', 'Astor Pl'],
+        estimatedResolution: new Date(Date.now() + 3600000),
+        isRushHour: true,
+        location: 'manhattan',
+        serviceReliability: 65,
+        walkingDistance: '0.3 miles'
+    },
+    {
+        id: '2',
+        title: 'Weekend Service Changes',
+        description: 'L train is not running between 14 St-Union Sq and 8 Av due to planned maintenance work. Free shuttle bus service is available.',
+        lines: ['L'],
+        severity: 'warning',
+        timestamp: new Date(Date.now() - 3600000),
+        affectedStations: ['14 St-Union Sq', '8 Av', '6 Av'],
+        estimatedResolution: new Date(Date.now() + 14400000),
+        isRushHour: false,
+        location: 'manhattan',
+        serviceReliability: 45,
+        walkingDistance: '0.5 miles'
+    },
+    {
+        id: '3',
+        title: 'Express Service Running Local',
+        description: 'N and Q trains are running local in Manhattan due to track work. Allow extra travel time.',
+        lines: ['N', 'Q'],
+        severity: 'warning',
+        timestamp: new Date(Date.now() - 900000),
+        affectedStations: ['Times Sq', 'Herald Sq', 'Union Sq'],
+        estimatedResolution: new Date(Date.now() + 7200000),
+        isRushHour: true,
+        location: 'manhattan',
+        serviceReliability: 75,
+        walkingDistance: '0.2 miles'
+    },
+    {
+        id: '4',
+        title: 'Station Accessibility Update',
+        description: 'Elevator at 59 St-Columbus Circle is back in service. All station levels are now accessible.',
+        lines: ['A', 'B', 'C', 'D'],
+        severity: 'info',
+        timestamp: new Date(Date.now() - 600000),
+        affectedStations: ['59 St-Columbus Circle'],
+        estimatedResolution: null,
+        isRushHour: false,
+        location: 'manhattan',
+        serviceReliability: 95,
+        walkingDistance: '0.8 miles'
+    },
+    {
+        id: '5',
+        title: 'Rush Hour Express Service',
+        description: 'Additional 6 express trains are running during evening rush hours to reduce crowding.',
+        lines: ['6'],
+        severity: 'info',
+        timestamp: new Date(Date.now() - 1200000),
+        affectedStations: ['Multiple stations'],
+        estimatedResolution: new Date(Date.now() + 1800000),
+        isRushHour: true,
+        location: 'manhattan',
+        serviceReliability: 85,
+        walkingDistance: '0.1 miles'
+    },
+    {
+        id: '6',
+        title: 'Brooklyn Service Alert',
+        description: 'F train experiencing minor delays due to train traffic ahead. Expect 5-10 minute delays.',
+        lines: ['F'],
+        severity: 'warning',
+        timestamp: new Date(Date.now() - 2700000),
+        affectedStations: ['Jay St', 'Borough Hall', 'Court St'],
+        estimatedResolution: new Date(Date.now() + 1800000),
+        isRushHour: false,
+        location: 'brooklyn',
+        serviceReliability: 80,
+        walkingDistance: '1.2 miles'
+    }
+];
+
+// ========== TRANSLATION SYSTEM ==========
+const TRANSLATIONS = {
+    en: {
+        title: "NYC Subway Alerts Pro",
+        subtitle: "Real-time service alerts with smart features and accessibility",
+        alertSounds: "Alert Sounds",
+        filterByLine: "Filter by Line:",
+        allLines: "All Lines",
+        filterBySeverity: "Filter by Severity:",
+        allSeverities: "All Severities",
+        criticalOnly: "Critical Only",
+        warnings: "Warnings",
+        info: "Info",
+        timeFilter: "Time Filter:",
+        allTimes: "All Times",
+        activeNow: "Active Now",
+        rushHour: "Rush Hour Impact",
+        plannedWork: "Planned Work",
+        location: "Location:",
+        allAreas: "All Areas",
+        nearMe: "🔍 Near Me",
+        manhattan: "Manhattan",
+        brooklyn: "Brooklyn",
+        queens: "Queens",
+        bronx: "Bronx",
+        refresh: "🔄 Refresh",
+        rushMode: "⏰ Rush Mode",
+        reset: "🗑️ Reset",
+        criticalAlerts: "Critical Alerts",
+        serviceInfo: "Service Info",
+        goodService: "Good Service",
+        rushHourAlerts: "Rush Hour Alerts",
+        exportShare: "📤 Export & Share",
+        exportJSON: "📄 Export JSON",
+        exportCSV: "📊 Export CSV",
+        printView: "🖨️ Print View",
+        shareSummary: "📱 Share Summary",
+        loadingAlerts: "Loading subway alerts...",
+        noAlertsFound: "✅ No Alerts Found",
+        noAlertsMessage: "No service alerts match your current filters. Try adjusting your criteria or check back later.",
+        share: "📱 Share",
+        directions: "🗺️ Directions",
+        affectedStations: "Affected Stations:",
+        serviceStatus: "Service Status:",
+        estimatedResolution: "Est. Resolution:",
+        away: "away",
+        updated: "📅 Updated:",
+        refreshing: "⏳ Refreshing...",
+        alertsRefreshed: "Alerts refreshed successfully!",
+        settingsRestored: "Settings restored from",
+        minutesAgo: "minutes ago",
+        soundsEnabled: "Sounds enabled",
+        soundsDisabled: "Sounds disabled",
+        gettingLocation: "Getting your location...",
+        locationFound: "Location found! Filtering nearby alerts.",
+        locationError: "Could not get location. Please enable location services.",
+        locationNotSupported: "Location not supported by your browser.",
+        rushHourModeOn: "Rush Hour Mode ON",
+        rushHourModeOff: "Rush Hour Mode OFF",
+        exported: "Exported",
+        alertsAs: "alerts as",
+        alertCopied: "Alert copied to clipboard!",
+        summaryCopied: "Alert summary copied to clipboard!",
+        preferencesCleared: "All preferences cleared!",
+        justNow: "Just now",
+        minAgo: "min ago",
+        hoursAgo: "hours ago",
+        critical: "critical",
+        warning: "warning",
+        serviceReliability: {
+            excellent: "🟢 Excellent",
+            good: "🟡 Good", 
+            fair: "🟠 Fair",
+            poor: "🔴 Poor",
+            veryPoor: "⛔ Very Poor"
+        },
+        fontSizes: {
+            normal: "Normal Text",
+            large: "Large Text",
+            small: "Small Text"
+        },
+        themeToggle: {
+            dark: "🌙 Dark",
+            light: "☀️ Light"
+        }
+    },
+    es: {
+        title: "Alertas del Metro de NYC Pro",
+        subtitle: "Alertas de servicio en tiempo real con funciones inteligentes y accesibilidad",
+        alertSounds: "Sonidos de Alerta",
+        filterByLine: "Filtrar por Línea:",
+        allLines: "Todas las Líneas",
+        filterBySeverity: "Filtrar por Severidad:",
+        allSeverities: "Todas las Severidades",
+        criticalOnly: "Solo Críticas",
+        warnings: "Advertencias",
+        info: "Información",
+        timeFilter: "Filtro de Tiempo:",
+        allTimes: "Todos los Tiempos",
+        activeNow: "Activo Ahora",
+        rushHour: "Impacto de Hora Pico",
+        plannedWork: "Trabajo Planificado",
+        location: "Ubicación:",
+        allAreas: "Todas las Áreas",
+        nearMe: "🔍 Cerca de Mí",
+        manhattan: "Manhattan",
+        brooklyn: "Brooklyn",
+        queens: "Queens",
+        bronx: "Bronx",
+        refresh: "🔄 Actualizar",
+        rushMode: "⏰ Modo Hora Pico",
+        reset: "🗑️ Restablecer",
+        criticalAlerts: "Alertas Críticas",
+        serviceInfo: "Info del Servicio",
+        goodService: "Buen Servicio",
+        rushHourAlerts: "Alertas de Hora Pico",
+        exportShare: "📤 Exportar y Compartir",
+        exportJSON: "📄 Exportar JSON",
+        exportCSV: "📊 Exportar CSV",
+        printView: "🖨️ Vista de Impresión",
+        shareSummary: "📱 Compartir Resumen",
+        loadingAlerts: "Cargando alertas del metro...",
+        noAlertsFound: "✅ No se Encontraron Alertas",
+        noAlertsMessage: "Ninguna alerta de servicio coincide con sus filtros actuales. Intente ajustar sus criterios o vuelva más tarde.",
+        share: "📱 Compartir",
+        directions: "🗺️ Direcciones",
+        affectedStations: "Estaciones Afectadas:",
+        serviceStatus: "Estado del Servicio:",
+        estimatedResolution: "Resolución Estimada:",
+        away: "de distancia",
+        updated: "📅 Actualizado:",
+        refreshing: "⏳ Actualizando...",
+        alertsRefreshed: "¡Alertas actualizadas con éxito!",
+        settingsRestored: "Configuración restaurada desde hace",
+        minutesAgo: "minutos",
+        soundsEnabled: "Sonidos habilitados",
+        soundsDisabled: "Sonidos deshabilitados",
+        gettingLocation: "Obteniendo su ubicación...",
+        locationFound: "¡Ubicación encontrada! Filtrando alertas cercanas.",
+        locationError: "No se pudo obtener la ubicación. Habilite los servicios de ubicación.",
+        locationNotSupported: "Ubicación no compatible con su navegador.",
+        rushHourModeOn: "Modo Hora Pico ACTIVADO",
+        rushHourModeOff: "Modo Hora Pico DESACTIVADO",
+        exported: "Exportadas",
+        alertsAs: "alertas como",
+        alertCopied: "¡Alerta copiada al portapapeles!",
+        summaryCopied: "¡Resumen de alerta copiado al portapapeles!",
+        preferencesCleared: "¡Todas las preferencias eliminadas!",
+        justNow: "Ahora mismo",
+        minAgo: "min atrás",
+        hoursAgo: "horas atrás",
+        critical: "crítico",
+        warning: "advertencia",
+        serviceReliability: {
+            excellent: "🟢 Excelente",
+            good: "🟡 Bueno",
+            fair: "🟠 Regular", 
+            poor: "🔴 Malo",
+            veryPoor: "⛔ Muy Malo"
+        },
+        fontSizes: {
+            normal: "Texto Normal",
+            large: "Texto Grande",
+            small: "Texto Pequeño"
+        },
+        themeToggle: {
+            dark: "🌙 Oscuro",
+            light: "☀️ Claro"
+        }
+    },
+    fr: {
+        title: "Alertes Métro NYC Pro",
+        subtitle: "Alertes de service en temps réel avec fonctionnalités intelligentes et accessibilité",
+        alertSounds: "Sons d'Alerte",
+        filterByLine: "Filtrer par Ligne:",
+        allLines: "Toutes les Lignes",
+        filterBySeverity: "Filtrer par Gravité:",
+        allSeverities: "Toutes les Gravités",
+        criticalOnly: "Critique Seulement",
+        warnings: "Avertissements",
+        info: "Information",
+        timeFilter: "Filtre Temporel:",
+        allTimes: "Tous les Temps",
+        activeNow: "Actif Maintenant",
+        rushHour: "Impact Heure de Pointe",
+        plannedWork: "Travaux Planifiés",
+        location: "Emplacement:",
+        allAreas: "Toutes les Zones",
+        nearMe: "🔍 Près de Moi",
+        manhattan: "Manhattan",
+        brooklyn: "Brooklyn",
+        queens: "Queens",
+        bronx: "Bronx",
+        refresh: "🔄 Actualiser",
+        rushMode: "⏰ Mode Pointe",
+        reset: "🗑️ Réinitialiser",
+        criticalAlerts: "Alertes Critiques",
+        serviceInfo: "Info Service",
+        goodService: "Bon Service",
+        rushHourAlerts: "Alertes Heure Pointe",
+        exportShare: "📤 Exporter et Partager",
+        exportJSON: "📄 Exporter JSON",
+        exportCSV: "📊 Exporter CSV",
+        printView: "🖨️ Vue Impression",
+        shareSummary: "📱 Partager Résumé",
+        loadingAlerts: "Chargement des alertes métro...",
+        noAlertsFound: "✅ Aucune Alerte Trouvée",
+        noAlertsMessage: "Aucune alerte de service ne correspond à vos filtres actuels. Essayez d'ajuster vos critères ou revenez plus tard.",
+        share: "📱 Partager",
+        directions: "🗺️ Directions",
+        affectedStations: "Stations Affectées:",
+        serviceStatus: "État du Service:",
+        estimatedResolution: "Résolution Estimée:",
+        away: "de distance",
+        updated: "📅 Mis à jour:",
+        refreshing: "⏳ Actualisation...",
+        alertsRefreshed: "Alertes actualisées avec succès!",
+        settingsRestored: "Paramètres restaurés depuis",
+        minutesAgo: "minutes",
+        soundsEnabled: "Sons activés",
+        soundsDisabled: "Sons désactivés",
+        gettingLocation: "Obtention de votre position...",
+        locationFound: "Position trouvée! Filtrage des alertes à proximité.",
+        locationError: "Impossible d'obtenir la position. Veuillez activer les services de localisation.",
+        locationNotSupported: "Localisation non prise en charge par votre navigateur.",
+        rushHourModeOn: "Mode Heure de Pointe ACTIVÉ",
+        rushHourModeOff: "Mode Heure de Pointe DÉSACTIVÉ",
+        exported: "Exporté",
+        alertsAs: "alertes en tant que",
+        alertCopied: "Alerte copiée dans le presse-papiers!",
+        summaryCopied: "Résumé d'alerte copié dans le presse-papiers!",
+        preferencesCleared: "Toutes les préférences effacées!",
+        justNow: "À l'instant",
+        minAgo: "min avant",
+        hoursAgo: "heures avant",
+        critical: "critique",
+        warning: "avertissement",
+        serviceReliability: {
+            excellent: "🟢 Excellent",
+            good: "🟡 Bon",
+            fair: "🟠 Passable",
+            poor: "🔴 Mauvais",
+            veryPoor: "⛔ Très Mauvais"
+        },
+        fontSizes: {
+            normal: "Texte Normal",
+            large: "Grand Texte",
+            small: "Petit Texte"
+        },
+        themeToggle: {
+            dark: "🌙 Sombre",
+            light: "☀️ Clair"
+        }
+    },
+    ja: {
+        title: "NYCサブウェイアラートプロ",
+        subtitle: "スマート機能とアクセシビリティを備えたリアルタイムサービスアラート",
+        alertSounds: "アラート音",
+        filterByLine: "路線でフィルター:",
+        allLines: "すべての路線",
+        filterBySeverity: "重要度でフィルター:",
+        allSeverities: "すべての重要度",
+        criticalOnly: "重要のみ",
+        warnings: "警告",
+        info: "情報",
+        timeFilter: "時間フィルター:",
+        allTimes: "すべての時間",
+        activeNow: "現在アクティブ",
+        rushHour: "ラッシュアワーの影響",
+        plannedWork: "計画作業",
+        location: "場所:",
+        allAreas: "すべてのエリア",
+        nearMe: "🔍 近くの",
+        manhattan: "マンハッタン",
+        brooklyn: "ブルックリン",
+        queens: "クイーンズ",
+        bronx: "ブロンクス",
+        refresh: "🔄 更新",
+        rushMode: "⏰ ラッシュモード",
+        reset: "🗑️ リセット",
+        criticalAlerts: "重要なアラート",
+        serviceInfo: "サービス情報",
+        goodService: "良好なサービス",
+        rushHourAlerts: "ラッシュアワーアラート",
+        exportShare: "📤 エクスポートと共有",
+        exportJSON: "📄 JSON エクスポート",
+        exportCSV: "📊 CSV エクスポート",
+        printView: "🖨️ 印刷ビュー",
+        shareSummary: "📱 概要を共有",
+        loadingAlerts: "地下鉄アラートを読み込み中...",
+        noAlertsFound: "✅ アラートが見つかりません",
+        noAlertsMessage: "現在のフィルターに一致するサービスアラートがありません。条件を調整するか、後でもう一度確認してください。",
+        share: "📱 共有",
+        directions: "🗺️ 道順",
+        affectedStations: "影響を受ける駅:",
+        serviceStatus: "サービス状況:",
+        estimatedResolution: "推定解決時間:",
+        away: "離れた場所",
+        updated: "📅 更新:",
+        refreshing: "⏳ 更新中...",
+        alertsRefreshed: "アラートが正常に更新されました！",
+        settingsRestored: "設定が復元されました",
+        minutesAgo: "分前",
+        soundsEnabled: "サウンドが有効",
+        soundsDisabled: "サウンドが無効",
+        gettingLocation: "現在地を取得中...",
+        locationFound: "位置が見つかりました！近くのアラートをフィルタリングしています。",
+        locationError: "位置を取得できませんでした。位置情報サービスを有効にしてください。",
+        locationNotSupported: "お使いのブラウザでは位置情報がサポートされていません。",
+        rushHourModeOn: "ラッシュアワーモード オン",
+        rushHourModeOff: "ラッシュアワーモード オフ",
+        exported: "エクスポート済み",
+        alertsAs: "アラートを",
+        alertCopied: "アラートがクリップボードにコピーされました！",
+        summaryCopied: "アラートの概要がクリップボードにコピーされました！",
+        preferencesCleared: "すべての設定がクリアされました！",
+        justNow: "たった今",
+        minAgo: "分前",
+        hoursAgo: "時間前",
+        critical: "重要",
+        warning: "警告",
+        serviceReliability: {
+            excellent: "🟢 優秀",
+            good: "🟡 良好",
+            fair: "🟠 普通",
+            poor: "🔴 悪い",
+            veryPoor: "⛔ とても悪い"
+        },
+        fontSizes: {
+            normal: "通常のテキスト",
+            large: "大きなテキスト",
+            small: "小さなテキスト"
+        },
+        themeToggle: {
+            dark: "🌙 ダーク",
+            light: "☀️ ライト"
+        }
+    }
+};
+
+// ========== UTILITY FUNCTIONS ==========
+const Utils = {
+    /**
+     * Translation helper function
+     * @param {string} key - Translation key (supports dot notation)
+     * @returns {string} Translated text
+     */
+    translate(key) {
+        const keys = key.split('.');
+        let value = TRANSLATIONS[AppState.userPreferences.currentLanguage];
+        
+        for (const k of keys) {
+            value = value?.[k];
+            if (value === undefined) {
+                return TRANSLATIONS.en[key] || key;
+            }
+        }
+        return value;
+    },
+
+    /**
+     * Format timestamp relative to current time
+     * @param {Date} timestamp - The timestamp to format
+     * @returns {string} Formatted time string
+     */
+    formatTimestamp(timestamp) {
+        const now = new Date();
+        const diff = now - timestamp;
+        const minutes = Math.floor(diff / 60000);
+        
+        if (minutes < 1) return this.translate('justNow');
+        if (minutes < 60) return `${minutes} ${this.translate('minAgo')}`;
+        
+        const hours = Math.floor(minutes / 60);
+        if (hours < 24) return `${hours} ${this.translate('hoursAgo')}`;
+        
+        return timestamp.toLocaleDateString();
+    },
+
+    /**
+     * Format time in 12-hour format
+     * @param {Date} date - Date object to format
+     * @returns {string} Formatted time string
+     */
+    formatTime(date) {
+        return date.toLocaleTimeString('en-US', { 
+            hour: 'numeric', 
+            minute: '2-digit',
+            hour12: true 
+        });
+    },
+
+    /**
+     * Get service reliability indicator
+     * @param {number} percentage - Reliability percentage
+     * @returns {string} Reliability indicator with emoji
+     */
+    getServiceReliabilityIndicator(percentage) {
+        if (percentage >= 90) return this.translate('serviceReliability.excellent');
+        if (percentage >= 75) return this.translate('serviceReliability.good');
+        if (percentage >= 60) return this.translate('serviceReliability.fair');
+        if (percentage >= 40) return this.translate('serviceReliability.poor');
+        return this.translate('serviceReliability.veryPoor');
+    },
+
+    /**
+     * Convert data to CSV format
+     * @param {Array} data - Array of objects to convert
+     * @returns {string} CSV formatted string
+     */
+    convertToCSV(data) {
+        if (data.length === 0) return '';
+        
+        const headers = Object.keys(data[0]);
+        const csvContent = [
+            headers.join(','),
+            ...data.map(row => headers.map(header => `"${row[header]}"`).join(','))
+        ].join('\n');
+        
+        return csvContent;
+    },
+
+    /**
+     * Download file to user's device
+     * @param {string} content - File content
+     * @param {string} filename - Name of file
+     * @param {string} contentType - MIME type
+     */
+    downloadFile(content, filename, contentType) {
+        const blob = new Blob([content], { type: contentType });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+};
+
+// ========== NOTIFICATION SYSTEM ==========
+const NotificationManager = {
+    /**
+     * Show notification to user
+     * @param {string} message - Notification message
+     * @param {string} type - Notification type (info, success, warning, error)
+     */
+    show(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        // Animate in
+        setTimeout(() => {
+            notification.style.opacity = '1';
+            notification.style.transform = 'translateX(0)';
+        }, 100);
+        
+        // Animate out and remove
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+};
+
+// ========== SOUND SYSTEM ==========
+const SoundManager = {
+    /**
+     * Play notification sound
+     * @param {string} type - Sound type (critical, warning, info, refresh)
+     */
+    play(type) {
+        if (!AppState.userPreferences.soundEnabled) return;
+        
+        try {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            const frequencies = {
+                'critical': 800,
+                'warning': 600,
+                'info': 400,
+                'refresh': 700
+            };
+            
+            oscillator.frequency.setValueAtTime(frequencies[type] || 500, audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.2);
+        } catch (error) {
+            console.log('Sound playback failed:', error);
+        }
+    }
+};
+
+// ========== STORAGE MANAGER ==========
+const StorageManager = {
+    /**
+     * Save user preferences
+     */
+    savePreferences() {
+        const preferences = {
+            lineFilter: document.getElementById('lineFilter').value,
+            severityFilter: document.getElementById('severityFilter').value,
+            timeFilter: document.getElementById('timeFilter').value,
+            locationFilter: document.getElementById('locationFilter').value,
+            soundEnabled: AppState.userPreferences.soundEnabled,
+            theme: AppState.userPreferences.currentTheme,
+            fontSize: AppState.userPreferences.currentFontSize,
+            rushHourMode: AppState.userPreferences.rushHourMode,
+            language: AppState.userPreferences.currentLanguage,
+            lastUpdated: new Date().toISOString()
+        };
+        
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(preferences));
+        } catch (error) {
+            console.log('Could not save preferences:', error);
+        }
+    },
+
+    /**
+     * Load user preferences
+     */
+    loadPreferences() {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (!saved) return;
+
+            const preferences = JSON.parse(saved);
+            
+            // Update form elements
+            document.getElementById('lineFilter').value = preferences.lineFilter || 'all';
+            document.getElementById('severityFilter').value = preferences.severityFilter || 'all';
+            document.getElementById('timeFilter').value = preferences.timeFilter || 'all';
+            document.getElementById('locationFilter').value = preferences.locationFilter || 'all';
